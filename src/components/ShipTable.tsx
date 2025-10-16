@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ShipSchedule } from "@/types/ship";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Search,
-  ArrowUpDown,
   Ship,
   Anchor,
   Clock,
   MapPin,
   ChevronDown,
   ChevronUp,
+  Building2,
 } from "lucide-react";
 
 interface ShipTableProps {
@@ -22,8 +22,7 @@ interface ShipTableProps {
 export const ShipTable = ({ data }: ShipTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterNav, setFilterNav] = useState<"all" | "입항" | "출항">("all");
-  const [sortBy, setSortBy] = useState<"time" | "ship">("time");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [filterLine, setFilterLine] = useState<string>("all");
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const toggleRow = (id: string) => {
@@ -36,32 +35,22 @@ export const ShipTable = ({ data }: ShipTableProps) => {
     setExpandedRows(newExpanded);
   };
 
+  // 데이터에서 고유한 라인 목록 추출
+  const uniqueLines = useMemo(() => {
+    const lines = [...new Set(data.map((ship) => ship.line))];
+    return lines.sort();
+  }, [data]);
+
   const filteredData = data
     .filter((ship) => {
       const matchesSearch =
         ship.shipName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ship.agent.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesNav = filterNav === "all" || ship.navigation === filterNav;
-      return matchesSearch && matchesNav;
+      const matchesLine = filterLine === "all" || ship.line === filterLine;
+      return matchesSearch && matchesNav && matchesLine;
     })
-    .sort((a, b) => {
-      if (sortBy === "time") {
-        const comparison = a.time.localeCompare(b.time);
-        return sortOrder === "asc" ? comparison : -comparison;
-      } else {
-        const comparison = a.shipName.localeCompare(b.shipName);
-        return sortOrder === "asc" ? comparison : -comparison;
-      }
-    });
-
-  const toggleSort = (field: "time" | "ship") => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(field);
-      setSortOrder("asc");
-    }
-  };
+    .sort((a, b) => a.time.localeCompare(b.time)); // 항상 시간순 정렬
 
   return (
     <div className="space-y-4">
@@ -101,28 +90,28 @@ export const ShipTable = ({ data }: ShipTableProps) => {
         </div>
       </div>
 
-      {/* 정렬 버튼 */}
-      <div className="flex gap-2">
+      {/* 라인별 필터 */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2">
+        <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
         <Button
-          variant="outline"
+          variant={filterLine === "all" ? "default" : "outline"}
+          onClick={() => setFilterLine("all")}
           size="sm"
-          onClick={() => toggleSort("time")}
-          className="gap-2"
+          className="shrink-0"
         >
-          <Clock className="h-4 w-4" />
-          시간순
-          <ArrowUpDown className="h-3 w-3" />
+          전체 라인
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => toggleSort("ship")}
-          className="gap-2"
-        >
-          <Ship className="h-4 w-4" />
-          선박명순
-          <ArrowUpDown className="h-3 w-3" />
-        </Button>
+        {uniqueLines.map((line) => (
+          <Button
+            key={line}
+            variant={filterLine === line ? "default" : "outline"}
+            onClick={() => setFilterLine(line)}
+            size="sm"
+            className="shrink-0 whitespace-nowrap"
+          >
+            {line}
+          </Button>
+        ))}
       </div>
 
       {/* 선박 카드 리스트 */}
