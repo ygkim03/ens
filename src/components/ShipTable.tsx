@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ShipSchedule } from "@/types/ship";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import {
   ChevronDown,
   ChevronUp,
   Building2,
+  RefreshCw,
 } from "lucide-react";
 
 interface ShipTableProps {
@@ -24,6 +25,32 @@ export const ShipTable = ({ data }: ShipTableProps) => {
   const [filterNav, setFilterNav] = useState<"all" | "입항" | "출항">("all");
   const [filterLine, setFilterLine] = useState<string>("all");
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatTime = (date: Date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  };
 
   const toggleRow = (id: string) => {
     const newExpanded = new Set(expandedRows);
@@ -54,6 +81,28 @@ export const ShipTable = ({ data }: ShipTableProps) => {
 
   return (
     <div className="space-y-4">
+      {/* 날짜/시간 & 새로고침 */}
+      <div className="flex items-center justify-between bg-card border rounded-lg p-3">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-muted-foreground" />
+            <span className="font-semibold text-sm">{formatDate(currentTime)}</span>
+          </div>
+          <div className="text-lg font-bold text-primary">
+            {formatTime(currentTime)}
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          className="gap-2"
+        >
+          <RefreshCw className="h-4 w-4" />
+          새로고침
+        </Button>
+      </div>
+
       {/* 검색 & 필터 */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
