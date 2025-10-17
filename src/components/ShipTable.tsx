@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { ShipSchedule } from "@/types/ship";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,25 +21,28 @@ interface ShipTableProps {
 }
 
 export const ShipTable = ({ data }: ShipTableProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterNav, setFilterNav] = useState<"all" | "입항" | "출항">("all");
-  const [filterLine, setFilterLine] = useState<string>("all");
+  const [filterLine, setFilterLine] = useState<Set<string>>(new Set());
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const handleRefresh = () => {
     window.location.reload();
   };
 
-  // 선박 스케줄에서 날짜 추출 (첫 번째 선박의 시간 기준)
+  // 선박 스케줄에서 날짜 추출
   const scheduleDate = useMemo(() => {
     if (data.length === 0) return '';
-    // 시간 형식: "06:00" 등
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return data[0].date;
   }, [data]);
+
+  const toggleLineFilter = (line: string) => {
+    const newFilter = new Set(filterLine);
+    if (newFilter.has(line)) {
+      newFilter.delete(line);
+    } else {
+      newFilter.add(line);
+    }
+    setFilterLine(newFilter);
+  };
 
   const toggleRow = (id: string) => {
     const newExpanded = new Set(expandedRows);
@@ -59,90 +62,50 @@ export const ShipTable = ({ data }: ShipTableProps) => {
 
   const filteredData = data
     .filter((ship) => {
-      const matchesSearch =
-        ship.shipName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ship.agent.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesNav = filterNav === "all" || ship.navigation === filterNav;
-      const matchesLine = filterLine === "all" || ship.line === filterLine;
-      return matchesSearch && matchesNav && matchesLine;
+      const matchesLine = filterLine.size === 0 || filterLine.has(ship.line);
+      return matchesLine;
     })
-    .sort((a, b) => a.time.localeCompare(b.time)); // 항상 시간순 정렬
+    .sort((a, b) => a.time.localeCompare(b.time));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* 날짜 & 새로고침 */}
-      <div className="flex items-center justify-between bg-card border rounded-lg p-3">
+      <div className="flex items-center justify-between bg-card border rounded-lg p-2">
         <div className="flex items-center gap-2">
           <Clock className="h-4 w-4 text-muted-foreground" />
-          <span className="font-semibold">선박 스케줄</span>
+          <span className="text-sm font-semibold">선박 스케줄</span>
           <span className="text-muted-foreground">|</span>
-          <span className="font-semibold text-primary">{scheduleDate}</span>
+          <span className="text-sm font-semibold text-primary">{scheduleDate}</span>
         </div>
         <Button
           variant="outline"
           size="sm"
           onClick={handleRefresh}
-          className="gap-2"
+          className="gap-2 h-8"
         >
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCw className="h-3 w-3" />
           새로고침
         </Button>
       </div>
 
-      {/* 검색 & 필터 */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="선박명 또는 대리점 검색..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant={filterNav === "all" ? "default" : "outline"}
-            onClick={() => setFilterNav("all")}
-            size="sm"
-          >
-            전체
-          </Button>
-          <Button
-            variant={filterNav === "입항" ? "default" : "outline"}
-            onClick={() => setFilterNav("입항")}
-            size="sm"
-          >
-            입항
-          </Button>
-          <Button
-            variant={filterNav === "출항" ? "default" : "outline"}
-            onClick={() => setFilterNav("출항")}
-            size="sm"
-          >
-            출항
-          </Button>
-        </div>
-      </div>
-
       {/* 라인별 필터 */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+        <Building2 className="h-3 w-3 text-muted-foreground shrink-0" />
         <Button
-          variant={filterLine === "all" ? "default" : "outline"}
-          onClick={() => setFilterLine("all")}
+          variant={filterLine.size === 0 ? "default" : "outline"}
+          onClick={() => setFilterLine(new Set())}
           size="sm"
-          className="shrink-0"
+          className="shrink-0 h-7 text-xs"
         >
           전체 라인
         </Button>
         {uniqueLines.map((line) => (
           <Button
             key={line}
-            variant={filterLine === line ? "default" : "outline"}
-            onClick={() => setFilterLine(line)}
+            variant={filterLine.has(line) ? "default" : "outline"}
+            onClick={() => toggleLineFilter(line)}
             size="sm"
-            className="shrink-0 whitespace-nowrap"
+            className="shrink-0 whitespace-nowrap h-7 text-xs"
           >
             {line}
           </Button>
@@ -150,70 +113,75 @@ export const ShipTable = ({ data }: ShipTableProps) => {
       </div>
 
       {/* 선박 카드 리스트 */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {filteredData.map((ship) => {
           const isExpanded = expandedRows.has(ship.id);
+          const bgColor = ship.navigation === "입항" 
+            ? "bg-[hsl(var(--arrival-card))] dark:bg-[hsl(var(--arrival-card-dark))]"
+            : "bg-[hsl(var(--departure-card))] dark:bg-[hsl(var(--departure-card-dark))]";
+          
           return (
             <Card
               key={ship.id}
-              className="p-4 hover:shadow-lg transition-all duration-200 cursor-pointer"
+              className={`p-2 hover:shadow-md transition-all duration-200 cursor-pointer ${bgColor}`}
               onClick={() => toggleRow(ship.id)}
             >
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {/* 기본 정보 */}
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-1.5 mb-0.5">
                       <Badge
                         variant={ship.navigation === "입항" ? "default" : "secondary"}
+                        className="text-xs h-5"
                       >
                         {ship.navigation}
                       </Badge>
                       {ship.isSpecial && (
-                        <Badge variant="outline" className="bg-accent/10">
+                        <Badge variant="outline" className="bg-accent/10 text-xs h-5">
                           특이
                         </Badge>
                       )}
                       {ship.quarantine && (
-                        <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900">
+                        <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900 text-xs h-5">
                           검역
                         </Badge>
                       )}
                     </div>
-                    <h3 className="font-bold text-lg truncate">{ship.shipName}</h3>
-                    <p className="text-sm text-muted-foreground">{ship.agent}</p>
+                    <h3 className="font-bold text-base truncate">{ship.shipName}</h3>
+                    <p className="text-xs text-muted-foreground">{ship.agent}</p>
                   </div>
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <div className="flex items-center gap-1 text-primary font-semibold">
-                      <Clock className="h-4 w-4" />
+                  <div className="flex flex-col items-end gap-0.5 shrink-0">
+                    <div className="flex items-center gap-1 text-primary font-semibold text-sm">
+                      <Clock className="h-3 w-3" />
                       {ship.time}
                     </div>
                     {isExpanded ? (
-                      <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                      <ChevronUp className="h-3 w-3 text-muted-foreground" />
                     ) : (
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      <ChevronDown className="h-3 w-3 text-muted-foreground" />
                     )}
                   </div>
                 </div>
 
                 {/* 주요 정보 */}
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+                <div className="grid grid-cols-2 gap-1.5 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="h-3 w-3 text-muted-foreground shrink-0" />
                     <span className="truncate">
                       {ship.from} → {ship.to}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Anchor className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div className="flex items-center gap-1.5">
+                    <Anchor className="h-3 w-3 text-muted-foreground shrink-0" />
                     <span className="truncate">{ship.side}</span>
                   </div>
                 </div>
 
                 {/* 상세 정보 (확장) */}
                 {isExpanded && (
-                  <div className="pt-3 border-t space-y-2 text-sm">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="pt-2 border-t space-y-1.5 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                       <div>
                         <span className="text-muted-foreground">GRT/LOA:</span>{" "}
                         <span className="font-medium">
