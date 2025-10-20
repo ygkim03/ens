@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Search,
   Ship,
@@ -110,34 +111,43 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
 
       {/* 선박 카드 리스트 */}
       <div className="space-y-2">
-        {filteredData.map((ship) => {
+        {filteredData.map((ship, index) => {
           const isExpanded = expandedRows.has(ship.id);
           const bgColor = ship.navigation === "입항" 
             ? "bg-[hsl(var(--arrival-card))] dark:bg-[hsl(var(--arrival-card-dark))]"
             : "bg-[hsl(var(--departure-card))] dark:bg-[hsl(var(--departure-card-dark))]";
           
+          // 날짜 구분선 표시 여부 확인
+          const showDateSeparator = index === 0 || filteredData[index - 1].date !== ship.date;
+          
           return (
-            <Card
-              key={ship.id}
-              className={`p-2 hover:shadow-md transition-all duration-200 cursor-pointer ${bgColor}`}
-              onClick={() => toggleRow(ship.id)}
-            >
+            <div key={ship.id}>
+              {showDateSeparator && (
+                <div className="py-3">
+                  <div className="flex items-center gap-3">
+                    <Separator className="flex-1" />
+                    <span className="text-sm font-semibold text-muted-foreground px-2">
+                      {ship.date}
+                    </span>
+                    <Separator className="flex-1" />
+                  </div>
+                </div>
+              )}
+              <Card
+                className={`p-2 hover:shadow-md transition-all duration-200 cursor-pointer ${bgColor}`}
+                onClick={() => toggleRow(ship.id)}
+              >
               <div className="space-y-2">
                 {/* 기본 정보 */}
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       <Badge
-                        variant={ship.navigation === "입항" ? "default" : "secondary"}
+                        variant="outline"
                         className="text-xs h-5"
                       >
                         {ship.navigation}
                       </Badge>
-                      {ship.isSpecial && (
-                        <Badge variant="outline" className="bg-accent/10 text-xs h-5">
-                          특이
-                        </Badge>
-                      )}
                       {ship.quarantine && (
                         <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900 text-xs h-5">
                           검역
@@ -218,7 +228,8 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
                   </div>
                 )}
               </div>
-            </Card>
+              </Card>
+            </div>
           );
         })}
       </div>
