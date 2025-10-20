@@ -1,4 +1,6 @@
 import { useState, useMemo } from "react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 import { ShipSchedule } from "@/types/ship";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -24,6 +26,17 @@ interface ShipTableProps {
 export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
   const [filterLine, setFilterLine] = useState<Set<string>>(new Set());
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  // 선박 스케줄에서 날짜 추출
+  const scheduleDate = useMemo(() => {
+    if (data.length === 0) return format(new Date(), 'yyyy년 MM월 dd일 (EEE)', { locale: ko });
+    try {
+      const date = new Date(data[0].date);
+      return format(date, 'yyyy년 MM월 dd일 (EEE)', { locale: ko });
+    } catch {
+      return data[0].date;
+    }
+  }, [data]);
 
   const toggleLineFilter = (line: string) => {
     const newFilter = new Set(filterLine);
@@ -60,8 +73,12 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
 
   return (
     <div className="space-y-3">
-      {/* 새로고침 */}
-      <div className="flex items-center justify-end">
+      {/* 날짜 & 새로고침 */}
+      <div className="flex items-center justify-between bg-card border rounded-lg p-2">
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-semibold text-primary">{scheduleDate}</span>
+        </div>
         <Button
           variant="outline"
           size="sm"
