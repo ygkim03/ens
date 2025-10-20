@@ -18,21 +18,12 @@ import {
 
 interface ShipTableProps {
   data: ShipSchedule[];
+  onRefresh: () => void;
 }
 
-export const ShipTable = ({ data }: ShipTableProps) => {
+export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
   const [filterLine, setFilterLine] = useState<Set<string>>(new Set());
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-
-  const handleRefresh = () => {
-    window.location.reload();
-  };
-
-  // 선박 스케줄에서 날짜 추출
-  const scheduleDate = useMemo(() => {
-    if (data.length === 0) return '';
-    return data[0].date;
-  }, [data]);
 
   const toggleLineFilter = (line: string) => {
     const newFilter = new Set(filterLine);
@@ -69,18 +60,12 @@ export const ShipTable = ({ data }: ShipTableProps) => {
 
   return (
     <div className="space-y-3">
-      {/* 날짜 & 새로고침 */}
-      <div className="flex items-center justify-between bg-card border rounded-lg p-2">
-        <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-semibold">선박 스케줄</span>
-          <span className="text-muted-foreground">|</span>
-          <span className="text-sm font-semibold text-primary">{scheduleDate}</span>
-        </div>
+      {/* 새로고침 */}
+      <div className="flex items-center justify-end">
         <Button
           variant="outline"
           size="sm"
-          onClick={handleRefresh}
+          onClick={onRefresh}
           className="gap-2 h-8"
         >
           <RefreshCw className="h-3 w-3" />
