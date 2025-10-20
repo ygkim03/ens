@@ -12,7 +12,17 @@ const Index = () => {
   const fetchShipData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(API_URL, {
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       
       // API 데이터를 ShipSchedule 형식으로 변환
@@ -42,6 +52,7 @@ const Index = () => {
       setShipData(transformedData);
     } catch (error) {
       console.error("Failed to fetch ship data:", error);
+      alert("데이터를 불러오는데 실패했습니다. Worker API에 CORS 헤더를 추가해주세요.\n\nWorker 코드에 다음을 추가하세요:\n\nconst headers = {\n  'Access-Control-Allow-Origin': '*',\n  'Access-Control-Allow-Methods': 'GET, OPTIONS',\n  'Access-Control-Allow-Headers': 'Content-Type',\n  'Content-Type': 'application/json'\n};\n\nreturn new Response(JSON.stringify(data), { headers });");
     } finally {
       setIsLoading(false);
     }
