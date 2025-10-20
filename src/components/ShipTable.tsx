@@ -56,7 +56,18 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
       const matchesLine = filterLine.size === 0 || filterLine.has(ship.line);
       return matchesLine;
     })
-    .sort((a, b) => a.time.localeCompare(b.time));
+    .sort((a, b) => {
+      // 날짜와 시간을 결합하여 Date 객체 생성
+      const dateTimeA = new Date(`${a.date}T${a.time}`);
+      const dateTimeB = new Date(`${b.date}T${b.time}`);
+      const now = new Date();
+      
+      // 현재 시간과의 절대 차이 계산
+      const diffA = Math.abs(dateTimeA.getTime() - now.getTime());
+      const diffB = Math.abs(dateTimeB.getTime() - now.getTime());
+      
+      return diffA - diffB;
+    });
 
   return (
     <div className="space-y-3">
