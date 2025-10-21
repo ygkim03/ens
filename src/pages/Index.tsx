@@ -74,9 +74,9 @@ const Index = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                부산항 신항
+                부산신항 도선 모니터링
               </h1>
-              <p className="text-sm text-muted-foreground">선박 입출항 스케줄</p>
+              <p className="text-sm text-muted-foreground">이엔에스마린 스케줄</p>
             </div>
           </div>
         </div>
