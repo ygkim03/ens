@@ -86,16 +86,18 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
       </div>
 
       {/* 라인별 필터 */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        <Building2 className="h-3 w-3 text-muted-foreground shrink-0" />
-        <Button
-          variant={filterLine.size === 0 ? "default" : "outline"}
-          onClick={() => setFilterLine(new Set())}
-          size="sm"
-          className="shrink-0 h-7 text-xs"
-        >
-          전체 라인
-        </Button>
+      <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          <Building2 className="h-3 w-3 text-muted-foreground shrink-0" />
+          <Button
+            variant={filterLine.size === 0 ? "default" : "outline"}
+            onClick={() => setFilterLine(new Set())}
+            size="sm"
+            className="shrink-0 h-7 text-xs"
+          >
+            전체 라인
+          </Button>
+        </div>
         {uniqueLines.map((line) => (
           <Button
             key={line}
@@ -123,13 +125,11 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
           return (
             <div key={ship.id}>
               {showDateSeparator && (
-                <div className="py-3">
-                  <div className="flex items-center gap-3">
-                    <Separator className="flex-1" />
-                    <span className="text-sm font-semibold text-muted-foreground px-2">
+                <div className="mb-3 mt-4">
+                  <div className="bg-primary/10 dark:bg-primary/20 rounded-md px-4 py-2">
+                    <span className="text-sm font-semibold text-primary">
                       {ship.date}
                     </span>
-                    <Separator className="flex-1" />
                   </div>
                 </div>
               )}
