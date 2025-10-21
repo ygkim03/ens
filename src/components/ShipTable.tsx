@@ -23,15 +23,19 @@ interface ShipTableProps {
 }
 
 export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
-  const [filterLine, setFilterLine] = useState<Set<string>>(new Set());
+  // 초기 필터를 이엔에스마린으로 설정 (없으면 전체)
+  const [filterLine, setFilterLine] = useState<Set<string>>(() => {
+    const ensMarineExists = data.some(ship => ship.agent === "이엔에스마린");
+    return ensMarineExists ? new Set(["이엔에스마린"]) : new Set();
+  });
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
-  const toggleLineFilter = (line: string) => {
+  const toggleAgentFilter = (agent: string) => {
     const newFilter = new Set(filterLine);
-    if (newFilter.has(line)) {
-      newFilter.delete(line);
+    if (newFilter.has(agent)) {
+      newFilter.delete(agent);
     } else {
-      newFilter.add(line);
+      newFilter.add(agent);
     }
     setFilterLine(newFilter);
   };
@@ -46,16 +50,16 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
     setExpandedRows(newExpanded);
   };
 
-  // 데이터에서 고유한 라인 목록 추출
-  const uniqueLines = useMemo(() => {
-    const lines = [...new Set(data.map((ship) => ship.line))];
-    return lines.sort();
+  // 데이터에서 고유한 업체 목록 추출
+  const uniqueAgents = useMemo(() => {
+    const agents = [...new Set(data.map((ship) => ship.agent))];
+    return agents.sort();
   }, [data]);
 
   const filteredData = data
     .filter((ship) => {
-      const matchesLine = filterLine.size === 0 || filterLine.has(ship.line);
-      return matchesLine;
+      const matchesAgent = filterLine.size === 0 || filterLine.has(ship.agent);
+      return matchesAgent;
     })
     .sort((a, b) => {
       // 날짜와 시간을 결합하여 Date 객체 생성
@@ -98,15 +102,15 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
             전체 라인
           </Button>
         </div>
-        {uniqueLines.map((line) => (
+        {uniqueAgents.map((agent) => (
           <Button
-            key={line}
-            variant={filterLine.has(line) ? "default" : "outline"}
-            onClick={() => toggleLineFilter(line)}
+            key={agent}
+            variant={filterLine.has(agent) ? "default" : "outline"}
+            onClick={() => toggleAgentFilter(agent)}
             size="sm"
             className="shrink-0 whitespace-nowrap h-7 text-xs"
           >
-            {line}
+            {agent}
           </Button>
         ))}
       </div>
@@ -126,8 +130,8 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
             <div key={ship.id}>
               {showDateSeparator && (
                 <div className="mb-3 mt-4">
-                  <div className="bg-primary/10 dark:bg-primary/20 rounded-md px-4 py-2">
-                    <span className="text-sm font-semibold text-primary">
+                  <div className="bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 dark:from-primary/30 dark:via-primary/20 dark:to-primary/30 rounded-md px-4 py-1.5 border-l-4 border-primary">
+                    <span className="text-sm font-bold text-primary">
                       {ship.date}
                     </span>
                   </div>
