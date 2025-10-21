@@ -50,10 +50,14 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
     setExpandedRows(newExpanded);
   };
 
-  // 데이터에서 고유한 라인 목록 추출
+  // 데이터에서 고유한 라인 목록 추출 (이엔에스마린을 맨 앞으로)
   const uniqueLines = useMemo(() => {
     const lines = [...new Set(data.map((ship) => ship.line))];
-    return lines.sort();
+    return lines.sort((a, b) => {
+      if (a === "이엔에스마린") return -1;
+      if (b === "이엔에스마린") return 1;
+      return a.localeCompare(b);
+    });
   }, [data]);
 
   const filteredData = data
@@ -141,35 +145,28 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
                 className={`p-2 hover:shadow-md transition-all duration-200 cursor-pointer ${bgColor}`}
                 onClick={() => toggleRow(ship.id)}
               >
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {/* 기본 정보 */}
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <Badge
-                        variant="outline"
-                        className="text-xs h-5"
-                      >
-                        {ship.navigation}
-                      </Badge>
-                      {ship.quarantine && (
-                        <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900 text-xs h-5">
-                          검역
-                        </Badge>
-                      )}
-                    </div>
-                    <h3 className="font-bold text-base truncate">{ship.shipName}</h3>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <span>{ship.agent}</span>
-                      <span className="text-muted-foreground">•</span>
-                      <span>{ship.date}</span>
-                    </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-primary font-semibold text-sm shrink-0">
+                    <Clock className="h-3 w-3" />
+                    {ship.time}
                   </div>
-                  <div className="flex flex-col items-end gap-0.5 shrink-0">
-                    <div className="flex items-center gap-1 text-primary font-semibold text-sm">
-                      <Clock className="h-3 w-3" />
-                      {ship.time}
-                    </div>
+                  <div className="flex items-center gap-1.5">
+                    <Badge
+                      variant="outline"
+                      className="text-xs h-5"
+                    >
+                      {ship.navigation}
+                    </Badge>
+                    {ship.quarantine && (
+                      <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900 text-xs h-5">
+                        검역
+                      </Badge>
+                    )}
+                  </div>
+                  <h3 className="font-bold text-sm truncate flex-1 min-w-0">{ship.shipName}</h3>
+                  <div className="shrink-0">
                     {isExpanded ? (
                       <ChevronUp className="h-3 w-3 text-muted-foreground" />
                     ) : (
@@ -178,24 +175,30 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
                   </div>
                 </div>
 
-                {/* 주요 정보 */}
-                <div className="grid grid-cols-2 gap-1.5 text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="h-3 w-3 text-muted-foreground shrink-0" />
-                    <span className="truncate">
-                      {ship.from} → {ship.to}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Anchor className="h-3 w-3 text-muted-foreground shrink-0" />
-                    <span className="truncate">{ship.side}</span>
-                  </div>
+                {/* from to 정보 */}
+                <div className="flex items-center gap-1.5 text-xs pl-1">
+                  <MapPin className="h-3 w-3 text-muted-foreground shrink-0" />
+                  <span className="truncate">
+                    {ship.from} → {ship.to}
+                  </span>
                 </div>
 
                 {/* 상세 정보 (확장) */}
                 {isExpanded && (
                   <div className="pt-2 border-t space-y-1.5 text-xs">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                      <div>
+                        <span className="text-muted-foreground">업체:</span>{" "}
+                        <span className="font-medium">{ship.agent}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">날짜:</span>{" "}
+                        <span className="font-medium">{ship.date}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">접안:</span>{" "}
+                        <span className="font-medium">{ship.side}</span>
+                      </div>
                       <div>
                         <span className="text-muted-foreground">GRT/LOA:</span>{" "}
                         <span className="font-medium">
