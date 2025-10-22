@@ -97,16 +97,16 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6 max-w-6xl min-h-[calc(100vh-280px)]">
+      <main className="container mx-auto px-4 py-3 max-w-6xl min-h-[calc(100vh-280px)]">
         {/* Terminal Buttons and Actions */}
-        <div className="mb-4 space-y-2">
+        <div className="mb-2 space-y-2">
           {/* 신항 AIS and 새로고침 buttons */}
           <div className="flex justify-end gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => window.open(TERMINAL_BUTTONS[7].url, '_blank')}
-              className="h-8 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500"
+              className="h-7 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
             >
               신항AIS
             </Button>
@@ -114,7 +114,7 @@ const Index = () => {
               variant="outline"
               size="sm"
               onClick={fetchShipData}
-              className="gap-2 h-8"
+              className="gap-2 h-7 rounded-lg"
             >
               <RefreshCw className="h-3 w-3" />
               새로고침
@@ -122,15 +122,15 @@ const Index = () => {
           </div>
           
           {/* Terminal Buttons (horizontal scroll) */}
-          <div className="overflow-x-auto">
-            <div className="flex gap-2 min-w-max pb-2">
+          <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
+            <div className="flex gap-2 min-w-max pb-1">
               {TERMINAL_BUTTONS.slice(0, 7).map((terminal) => (
                 <Button
                   key={terminal.name}
                   variant="outline"
                   size="sm"
                   onClick={() => window.open(terminal.url, '_blank')}
-                  className="h-8 text-xs whitespace-nowrap"
+                  className="h-7 text-xs whitespace-nowrap min-w-[60px] rounded-lg"
                 >
                   {terminal.name}
                 </Button>

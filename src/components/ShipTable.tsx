@@ -28,18 +28,14 @@ const TERMINAL_MAP: Record<string, string> = {
   "NT07": "PNC 7번",
   "NT08": "PNC 8번",
   "NT09": "PNC 미확정",
-  "NT10": "한진 1번",
-  "HJ1": "한진 1번",
-  "NT11": "한진 2번",
-  "HJ2": "한진 2번",
-  "NT12": "한진 3번",
-  "HJ3": "한진 3번",
-  "NT13": "한진 4번",
-  "HJ4": "한진 4번",
+  "NT10(HJ1)": "한진 1번",
+  "NT11(HJ2)": "한진 2번",
+  "NT12(HJ3)": "한진 3번",
+  "NT13(HJ4)": "한진 4번",
   "WT01": "동원 1번",
   "WT02": "동원 2번",
   "WT03": "동원 3번",
-  "MT-1": "다목적부두 북측",
+  "MT-1": "다목적 북측",
   "ST01": "현대 1번",
   "ST02": "현대 2번",
   "ST03": "현대 3번",
@@ -118,7 +114,7 @@ export const ShipTable = ({ data }: ShipTableProps) => {
     });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {/* 라인별 필터 */}
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-2">
@@ -146,7 +142,7 @@ export const ShipTable = ({ data }: ShipTableProps) => {
       </div>
 
       {/* 선박 카드 리스트 */}
-      <div className="space-y-2">
+      <div className="space-y-1">
         {filteredData.map((ship, index) => {
           const isExpanded = expandedRows.has(ship.id);
           let bgColor = "";
@@ -174,8 +170,8 @@ export const ShipTable = ({ data }: ShipTableProps) => {
           return (
             <div key={ship.id}>
               {showDateSeparator && (
-                <div className="mb-1 mt-2">
-                  <div className="bg-blue-600 dark:bg-blue-700 rounded-md px-3 py-0.5">
+                <div className="mb-0.5 mt-1.5">
+                  <div className="bg-blue-600 dark:bg-blue-700 rounded-lg px-3 py-0.5">
                     <span className="text-xs font-bold text-white">
                       {ship.date}
                     </span>
@@ -183,7 +179,7 @@ export const ShipTable = ({ data }: ShipTableProps) => {
                 </div>
               )}
               <Card
-                className={`p-1.5 hover:shadow-md transition-all duration-200 cursor-pointer ${bgColor}`}
+                className={`p-1.5 hover:shadow-md transition-all duration-200 cursor-pointer rounded-lg ${bgColor}`}
                 onClick={() => toggleRow(ship.id)}
               >
               <div className="space-y-0.5">
@@ -198,7 +194,7 @@ export const ShipTable = ({ data }: ShipTableProps) => {
                   {/* 입항/출항 */}
                   <Badge
                     variant="outline"
-                    className={`text-xs h-4 px-1.5 ${
+                    className={`text-xs h-4 px-1.5 rounded-md ${
                       ship.navigation === "입항" 
                         ? "bg-orange-500 text-white border-orange-500" 
                         : ship.navigation === "출항"
@@ -210,17 +206,17 @@ export const ShipTable = ({ data }: ShipTableProps) => {
                   </Badge>
                   
                   {/* 터미널 */}
-                  <span className="text-xs truncate">{terminalInfo}</span>
+                  <span className="text-xs truncate max-w-full overflow-hidden text-ellipsis">{terminalInfo}</span>
                   
                   {/* 검역 */}
                   {ship.quarantine && (
-                    <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900 text-xs h-4 px-1.5">
+                    <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900 text-xs h-4 px-1.5 rounded-md shrink-0">
                       검역
                     </Badge>
                   )}
                   
                   {/* 선명 (왼쪽 정렬, 남은 공간 차지) */}
-                  <h3 className="font-bold text-xs flex-1 min-w-0">{ship.shipName}</h3>
+                  <h3 className="font-bold text-xs flex-1 min-w-0 truncate overflow-hidden text-ellipsis">{ship.shipName}</h3>
                   
                   {/* 확장 아이콘 */}
                   <div className="shrink-0">
