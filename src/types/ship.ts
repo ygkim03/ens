@@ -15,8 +15,10 @@ export interface ShipSchedule {
   tugs: string;
   quarantine: boolean;
   line: string;
-  navigation: "입항" | "출항";
+  navigation: "입항" | "출항" | "이동";
   agent: string;
   remarks: string;
+  rmkTeam?: string;
+  rmkAgent?: string;
   isSpecial: boolean;
 }

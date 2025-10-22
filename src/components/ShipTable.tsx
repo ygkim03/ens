@@ -17,6 +17,46 @@ import {
   RefreshCw,
 } from "lucide-react";
 
+// 터미널 약어 → 풀네임 매핑
+const TERMINAL_MAP: Record<string, string> = {
+  "NT01": "PNIT 1번",
+  "NT02": "PNIT 2번",
+  "NT03": "PNIT 3번",
+  "NT04": "PNC 4번",
+  "NT05": "PNC 5번",
+  "NT06": "PNC 6번",
+  "NT07": "PNC 7번",
+  "NT08": "PNC 8번",
+  "NT09": "PNC 미확정",
+  "NT10": "한진 1번",
+  "HJ1": "한진 1번",
+  "NT11": "한진 2번",
+  "HJ2": "한진 2번",
+  "NT12": "한진 3번",
+  "HJ3": "한진 3번",
+  "NT13": "한진 4번",
+  "HJ4": "한진 4번",
+  "WT01": "동원 1번",
+  "WT02": "동원 2번",
+  "WT03": "동원 3번",
+  "MT-1": "다목적부두 북측",
+  "ST01": "현대 1번",
+  "ST02": "현대 2번",
+  "ST03": "현대 3번",
+  "ST04": "현대 4번",
+  "ST05": "고려 1번",
+  "ST06": "고려 2번",
+  "ST07": "고려 3번",
+  "ST08": "고려 4번",
+  "ST09": "BCT 1번",
+  "ST10": "BCT 2번",
+  "ST11": "BCT 3번",
+};
+
+const getTerminalName = (code: string): string => {
+  return TERMINAL_MAP[code] || code;
+};
+
 interface ShipTableProps {
   data: ShipSchedule[];
   onRefresh: () => void;
@@ -123,9 +163,24 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
       <div className="space-y-2">
         {filteredData.map((ship, index) => {
           const isExpanded = expandedRows.has(ship.id);
-          const bgColor = ship.navigation === "입항" 
-            ? "bg-[hsl(var(--arrival-card))] dark:bg-[hsl(var(--arrival-card-dark))]"
-            : "bg-[hsl(var(--departure-card))] dark:bg-[hsl(var(--departure-card-dark))]";
+          let bgColor = "";
+          if (ship.navigation === "입항") {
+            bgColor = "bg-[hsl(var(--arrival-card))] dark:bg-[hsl(var(--arrival-card-dark))]";
+          } else if (ship.navigation === "출항") {
+            bgColor = "bg-[hsl(var(--departure-card))] dark:bg-[hsl(var(--departure-card-dark))]";
+          } else if (ship.navigation === "이동") {
+            bgColor = "bg-[#C8F7C5] dark:bg-[#8BC985]";
+          }
+          
+          // 표시할 터미널 정보
+          let terminalInfo = "";
+          if (ship.navigation === "입항") {
+            terminalInfo = getTerminalName(ship.to);
+          } else if (ship.navigation === "출항") {
+            terminalInfo = getTerminalName(ship.from);
+          } else if (ship.navigation === "이동") {
+            terminalInfo = `${getTerminalName(ship.from)} → ${getTerminalName(ship.to)}`;
+          }
           
           // 날짜 구분선 표시 여부 확인
           const showDateSeparator = index === 0 || filteredData[index - 1].date !== ship.date;
@@ -133,39 +188,38 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
           return (
             <div key={ship.id}>
               {showDateSeparator && (
-                <div className="mb-1.5 mt-3">
-                  <div className="bg-blue-600 dark:bg-blue-700 rounded-md px-4 py-1.5">
-                    <span className="text-sm font-bold text-white">
+                <div className="mb-1 mt-2">
+                  <div className="bg-blue-600 dark:bg-blue-700 rounded-md px-3 py-0.5">
+                    <span className="text-xs font-bold text-white">
                       {ship.date}
                     </span>
                   </div>
                 </div>
               )}
               <Card
-                className={`p-2 hover:shadow-md transition-all duration-200 cursor-pointer ${bgColor}`}
+                className={`p-1.5 hover:shadow-md transition-all duration-200 cursor-pointer ${bgColor}`}
                 onClick={() => toggleRow(ship.id)}
               >
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {/* 기본 정보 */}
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 text-primary font-semibold text-sm shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-0.5 text-primary font-semibold text-xs shrink-0">
                     <Clock className="h-3 w-3" />
                     {ship.time}
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Badge
-                      variant="outline"
-                      className="text-xs h-5"
-                    >
-                      {ship.navigation}
+                  <Badge
+                    variant="outline"
+                    className="text-xs h-4 px-1.5"
+                  >
+                    {ship.navigation}
+                  </Badge>
+                  {ship.quarantine && (
+                    <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900 text-xs h-4 px-1.5">
+                      검역
                     </Badge>
-                    {ship.quarantine && (
-                      <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900 text-xs h-5">
-                        검역
-                      </Badge>
-                    )}
-                  </div>
-                  <h3 className="font-bold text-sm truncate flex-1 min-w-0">{ship.shipName}</h3>
+                  )}
+                  <span className="text-xs truncate flex-1 min-w-0">{terminalInfo}</span>
+                  <h3 className="font-bold text-xs truncate shrink-0 max-w-[120px]">{ship.shipName}</h3>
                   <div className="shrink-0">
                     {isExpanded ? (
                       <ChevronUp className="h-3 w-3 text-muted-foreground" />
@@ -175,39 +229,27 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
                   </div>
                 </div>
 
-                {/* from to 정보 */}
-                <div className="flex items-center gap-1.5 text-xs pl-1">
-                  <MapPin className="h-3 w-3 text-muted-foreground shrink-0" />
-                  <span className="truncate">
-                    {ship.from} → {ship.to}
-                  </span>
-                </div>
-
                 {/* 상세 정보 (확장) */}
                 {isExpanded && (
-                  <div className="pt-2 border-t space-y-1.5 text-xs">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  <div className="pt-1.5 border-t space-y-1 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                       <div>
-                        <span className="text-muted-foreground">업체:</span>{" "}
+                        <span className="text-muted-foreground">대리점:</span>{" "}
                         <span className="font-medium">{ship.agent}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">날짜:</span>{" "}
-                        <span className="font-medium">{ship.date}</span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">접안:</span>{" "}
-                        <span className="font-medium">{ship.side}</span>
                       </div>
                       <div>
                         <span className="text-muted-foreground">GRT/LOA:</span>{" "}
                         <span className="font-medium">
-                          {ship.grt} / {ship.loa}m
+                          {ship.grt} ton / {ship.loa}m
                         </span>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Draft:</span>{" "}
                         <span className="font-medium">{ship.dt}m</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">접안:</span>{" "}
+                        <span className="font-medium">{ship.side}</span>
                       </div>
                       <div>
                         <span className="text-muted-foreground">Call Sign:</span>{" "}
@@ -225,10 +267,16 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
                         <span className="text-muted-foreground">라인:</span>{" "}
                         <span className="font-medium">{ship.line}</span>
                       </div>
-                      {ship.remarks && (
+                      {(ship as any).rmkTeam && (
                         <div className="sm:col-span-2">
-                          <span className="text-muted-foreground">비고:</span>{" "}
-                          <span className="font-medium">{ship.remarks}</span>
+                          <span className="text-muted-foreground">RMK(지원팀):</span>{" "}
+                          <span className="font-medium">{(ship as any).rmkTeam}</span>
+                        </div>
+                      )}
+                      {(ship as any).rmkAgent && (
+                        <div className="sm:col-span-2">
+                          <span className="text-muted-foreground">RMK(대리점):</span>{" "}
+                          <span className="font-medium">{(ship as any).rmkAgent}</span>
                         </div>
                       )}
                     </div>

@@ -2,8 +2,20 @@ import { ShipTable } from "@/components/ShipTable";
 import { Ship, Waves } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ShipSchedule } from "@/types/ship";
+import { Button } from "@/components/ui/button";
 
 const API_URL = "https://yellow-truth-54a3.rladudrnr03.workers.dev/";
+
+const TERMINAL_BUTTONS = [
+  { name: "PNIT", url: "https://www.pnitl.com/infoservice/vessel/vslScheduleChart.jsp" },
+  { name: "PNC", url: "https://svc.pncport.com/info/CMS/Ship/ShipBerthCNew.pnc?mCode=MN105" },
+  { name: "HJNC", url: "https://www.hjnc.co.kr/esvc/vessel/berthScheduleG" },
+  { name: "HPNT", url: "https://www.hpnt.co.kr/infoservice/vessel/vslScheduleChart.jsp" },
+  { name: "BNCT", url: "https://info.bnctkorea.com/esvc/vessel/berthScheduleG" },
+  { name: "BCT", url: "https://info.bct2-4.com/infoservice/index.html" },
+  { name: "DGT", url: "https://info.dgtbusan.com/DGT/esvc/vessel/berthScheduleG" },
+  { name: "신항AIS", url: "https://www.marinetraffic.com/en/ais/home/centerx:128.788/centery:35.056/zoom:13" },
+];
 
 const Index = () => {
   const [shipData, setShipData] = useState<ShipSchedule[]>([]);
@@ -43,9 +55,11 @@ const Index = () => {
         tugs: item.tugs,
         quarantine: item.quarantine !== "",
         line: item.line,
-        navigation: item.nav === "입항" ? "입항" : "출항",
+        navigation: item.nav === "입항" ? "입항" : item.nav === "출항" ? "출항" : "이동",
         agent: item.agent,
         remarks: item.rmkTeam || item.rmkAgent || '',
+        rmkTeam: item.rmkTeam || '',
+        rmkAgent: item.rmkAgent || '',
         isSpecial: (item.rmkTeam && item.rmkTeam.includes('@')) || false
       }));
       
@@ -84,6 +98,21 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 max-w-6xl min-h-[calc(100vh-280px)]">
+        {/* Terminal Buttons */}
+        <div className="mb-4 flex flex-wrap gap-2">
+          {TERMINAL_BUTTONS.map((terminal) => (
+            <Button
+              key={terminal.name}
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(terminal.url, '_blank')}
+              className="h-8 text-xs"
+            >
+              {terminal.name}
+            </Button>
+          ))}
+        </div>
+
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
