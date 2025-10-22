@@ -59,10 +59,9 @@ const getTerminalName = (code: string): string => {
 
 interface ShipTableProps {
   data: ShipSchedule[];
-  onRefresh: () => void;
 }
 
-export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
+export const ShipTable = ({ data }: ShipTableProps) => {
   // 초기 필터를 이엔에스마린으로 설정 (없으면 전체)
   const [filterLine, setFilterLine] = useState<Set<string>>(() => {
     const ensMarineExists = data.some(ship => ship.line === "이엔에스마린");
@@ -120,19 +119,6 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
 
   return (
     <div className="space-y-3">
-      {/* 새로고침 */}
-      <div className="flex items-center justify-end">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onRefresh}
-          className="gap-2 h-8"
-        >
-          <RefreshCw className="h-3 w-3" />
-          새로고침
-        </Button>
-      </div>
-
       {/* 라인별 필터 */}
       <div className="flex items-center gap-2 flex-wrap">
         <div className="flex items-center gap-2">
@@ -202,24 +188,41 @@ export const ShipTable = ({ data, onRefresh }: ShipTableProps) => {
               >
               <div className="space-y-0.5">
                 {/* 기본 정보 */}
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {/* 시간 */}
                   <div className="flex items-center gap-0.5 text-primary font-semibold text-xs shrink-0">
                     <Clock className="h-3 w-3" />
                     {ship.time}
                   </div>
+                  
+                  {/* 입항/출항 */}
                   <Badge
                     variant="outline"
-                    className="text-xs h-4 px-1.5"
+                    className={`text-xs h-4 px-1.5 ${
+                      ship.navigation === "입항" 
+                        ? "bg-orange-500 text-white border-orange-500" 
+                        : ship.navigation === "출항"
+                        ? "bg-sky-500 text-white border-sky-500"
+                        : ""
+                    }`}
                   >
                     {ship.navigation}
                   </Badge>
+                  
+                  {/* 터미널 */}
+                  <span className="text-xs truncate">{terminalInfo}</span>
+                  
+                  {/* 검역 */}
                   {ship.quarantine && (
                     <Badge variant="outline" className="bg-yellow-100 dark:bg-yellow-900 text-xs h-4 px-1.5">
                       검역
                     </Badge>
                   )}
-                  <span className="text-xs truncate flex-1 min-w-0">{terminalInfo}</span>
-                  <h3 className="font-bold text-xs truncate shrink-0 max-w-[120px]">{ship.shipName}</h3>
+                  
+                  {/* 선명 (왼쪽 정렬, 남은 공간 차지) */}
+                  <h3 className="font-bold text-xs flex-1 min-w-0">{ship.shipName}</h3>
+                  
+                  {/* 확장 아이콘 */}
                   <div className="shrink-0">
                     {isExpanded ? (
                       <ChevronUp className="h-3 w-3 text-muted-foreground" />

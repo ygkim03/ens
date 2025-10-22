@@ -1,5 +1,5 @@
 import { ShipTable } from "@/components/ShipTable";
-import { Ship, Waves } from "lucide-react";
+import { Ship, Waves, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ShipSchedule } from "@/types/ship";
 import { Button } from "@/components/ui/button";
@@ -98,19 +98,45 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 max-w-6xl min-h-[calc(100vh-280px)]">
-        {/* Terminal Buttons */}
-        <div className="mb-4 flex flex-wrap gap-2">
-          {TERMINAL_BUTTONS.map((terminal) => (
+        {/* Terminal Buttons and Actions */}
+        <div className="mb-4 space-y-2">
+          {/* 신항 AIS and 새로고침 buttons */}
+          <div className="flex justify-end gap-2">
             <Button
-              key={terminal.name}
               variant="outline"
               size="sm"
-              onClick={() => window.open(terminal.url, '_blank')}
-              className="h-8 text-xs"
+              onClick={() => window.open(TERMINAL_BUTTONS[7].url, '_blank')}
+              className="h-8 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500"
             >
-              {terminal.name}
+              신항AIS
             </Button>
-          ))}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchShipData}
+              className="gap-2 h-8"
+            >
+              <RefreshCw className="h-3 w-3" />
+              새로고침
+            </Button>
+          </div>
+          
+          {/* Terminal Buttons (horizontal scroll) */}
+          <div className="overflow-x-auto">
+            <div className="flex gap-2 min-w-max pb-2">
+              {TERMINAL_BUTTONS.slice(0, 7).map((terminal) => (
+                <Button
+                  key={terminal.name}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(terminal.url, '_blank')}
+                  className="h-8 text-xs whitespace-nowrap"
+                >
+                  {terminal.name}
+                </Button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {isLoading ? (
@@ -119,7 +145,7 @@ const Index = () => {
             <p className="text-muted-foreground">데이터를 불러오는 중...</p>
           </div>
         ) : (
-          <ShipTable data={shipData} onRefresh={fetchShipData} />
+          <ShipTable data={shipData} />
         )}
       </main>
 
