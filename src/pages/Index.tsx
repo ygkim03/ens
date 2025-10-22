@@ -123,14 +123,14 @@ const Index = () => {
           
           {/* Terminal Buttons (horizontal scroll) */}
           <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
-            <div className="flex gap-2 min-w-max pb-1">
+            <div className="flex gap-1 min-w-max pb-1">
               {TERMINAL_BUTTONS.slice(0, 7).map((terminal) => (
                 <Button
                   key={terminal.name}
                   variant="outline"
                   size="sm"
                   onClick={() => window.open(terminal.url, '_blank')}
-                  className="h-7 text-xs whitespace-nowrap min-w-[60px] rounded-lg"
+                  className="h-6 text-xs whitespace-nowrap min-w-[50px] rounded-lg"
                 >
                   {terminal.name}
                 </Button>
