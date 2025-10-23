@@ -171,7 +171,7 @@ export const ShipTable = ({ data }: ShipTableProps) => {
             <div key={ship.id}>
               {showDateSeparator && (
                 <div className="mb-0.5 mt-1.5">
-                  <div className="bg-blue-600 dark:bg-blue-700 rounded-lg px-3 py-px">
+                  <div className="bg-blue-600 dark:bg-blue-700 rounded-lg px-3 py-0">
                     <span className="text-xs font-bold text-white leading-tight">
                       {ship.date}
                     </span>
