@@ -80,7 +80,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
 <header className="sticky top-0 z-10 backdrop-blur-lg bg-background/80 border-b shadow-sm">
-  <div className="container mx-auto px-4 py-6 relative">
+  <div className="container mx-auto px-4 py-5 relative">
     <div className="flex items-start gap-3">
       {/* 아이콘 + 타이틀 */}
       <div className="relative">
@@ -96,7 +96,7 @@ const Index = () => {
     </div>
 
     {/* 버튼 박스: 오른쪽 하단 고정 */}
-    <div className="absolute bottom-3 right-4 flex gap-2">
+    <div className="absolute bottom-2 right-4 flex gap-2">
       <Button
         variant="outline"
         size="sm"
