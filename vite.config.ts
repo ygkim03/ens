@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "robots.txt"],
       manifest: {
-        name: "부산항 신항 선박 스케줄",
-        short_name: "부산항 신항",
-        description: "부산항 신항 선박 입출항 스케줄 조회",
+        name: "이엔에스마린 도선 모니터링",
+        short_name: "이엔에스마린",
+        description: "이엔에스마린 부산신항 전체 도선 모니터링 실시간 파악",
         theme_color: "#0c4a6e",
         background_color: "#f0f9ff",
         display: "standalone",
