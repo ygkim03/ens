@@ -79,43 +79,45 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
-      <header className="sticky top-0 z-10 backdrop-blur-lg bg-background/80 border-b shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <Ship className="h-8 w-8 text-primary" />
-                <Waves className="h-4 w-4 text-accent absolute -bottom-1 -right-1" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  이엔에스마린 도선 모니터링
-                </h1>
-                <p className="text-sm text-muted-foreground">부산신항 실시간 스케줄</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.open(TERMINAL_BUTTONS[7].url, '_blank')}
-                className="h-7 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
-              >
-                신항AIS
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={fetchShipData}
-                className="gap-2 h-7 rounded-lg"
-              >
-                <RefreshCw className="h-3 w-3" />
-                새로고침
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+<header className="sticky top-0 z-10 backdrop-blur-lg bg-background/80 border-b shadow-sm">
+  <div className="container mx-auto px-4 py-4 relative">
+    <div className="flex items-start gap-3">
+      {/* 아이콘 + 타이틀 */}
+      <div className="relative">
+        <Ship className="h-8 w-8 text-primary" />
+        <Waves className="h-4 w-4 text-accent absolute -bottom-1 -right-1" />
+      </div>
+      <div>
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          부산신항 도선 모니터링
+        </h1>
+        <p className="text-sm text-muted-foreground">이엔에스마린 스케줄</p>
+      </div>
+    </div>
+
+    {/* 버튼 박스: 오른쪽 하단 고정 */}
+    <div className="absolute bottom-2 right-4 flex gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => window.open(TERMINAL_BUTTONS[7].url, "_blank")}
+        className="h-7 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
+      >
+        신항AIS
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={fetchShipData}
+        className="gap-2 h-7 rounded-lg"
+      >
+        <RefreshCw className="h-3 w-3" />
+        새로고침
+      </Button>
+    </div>
+  </div>
+</header>
+
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-3 max-w-6xl min-h-[calc(100vh-280px)]">
@@ -129,7 +131,7 @@ const Index = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => window.open(terminal.url, '_blank')}
-                  className="h-5 text-[10px] whitespace-nowrap min-w-[24px] px-1 py-0 rounded-md"
+                  className="h-6 text-[12px] whitespace-nowrap min-w-[45px] px-2 py-1 rounded-md"
                 >
                   {terminal.name}
                 </Button>
