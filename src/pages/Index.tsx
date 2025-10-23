@@ -130,7 +130,7 @@ const Index = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => window.open(terminal.url, '_blank')}
-                  className="h-6 text-[12px] whitespace-nowrap min-w-[40px] px-1 py-1 rounded-md"
+                  className="h-6 text-[12px] whitespace-nowrap min-w-[45px] px-2 py-1 rounded-md"
                 >
                   {terminal.name}
                 </Button>
