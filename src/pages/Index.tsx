@@ -61,6 +61,7 @@ const Index = () => {
         rmkTeam: item.rmkTeam || '',
         rmkAgent: item.rmkAgent || '',
         isSpecial: (item.rmkTeam && item.rmkTeam.includes('@')) || false
+        pt: item.pt
       }));
       
       setShipData(transformedData);
