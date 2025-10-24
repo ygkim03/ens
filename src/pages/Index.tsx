@@ -101,7 +101,7 @@ const Index = () => {
         variant="outline"
         size="sm"
         onClick={() => window.open(TERMINAL_BUTTONS[7].url, "_blank")}
-        className="h-7 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
+        className="h-7 w-auto px-2 py-2 text-xs bg-red-400 text-white hover:bg-red-500 border-red-400 rounded-lg"
       >
         신항AIS
       </Button>
