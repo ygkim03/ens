@@ -60,7 +60,7 @@ const Index = () => {
         remarks: item.rmkTeam || item.rmkAgent || '',
         rmkTeam: item.rmkTeam || '',
         rmkAgent: item.rmkAgent || '',
-        isSpecial: (item.rmkTeam && item.rmkTeam.includes('@')) || false
+        isSpecial: (item.rmkTeam && item.rmkTeam.includes('@')) || false,
         pt: item.pt
       }));
       
