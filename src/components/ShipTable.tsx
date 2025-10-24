@@ -123,7 +123,7 @@ export const ShipTable = ({ data }: ShipTableProps) => {
             variant={filterLine.size === 0 ? "default" : "outline"}
             onClick={() => setFilterLine(new Set())}
             size="sm"
-            className="shrink-0 w-auto px-1 py-3 h-6 text-xs"
+            className="shrink-0 w-auto px-2 py-3 h-6 text-xs"
           >
             전체 라인
           </Button>
@@ -134,7 +134,7 @@ export const ShipTable = ({ data }: ShipTableProps) => {
             variant={filterLine.has(line) ? "default" : "outline"}
             onClick={() => toggleLineFilter(line)}
             size="sm"
-            className="shrink-0 w-auto px-1 py-3 whitespace-nowrap h-6 text-xs"
+            className="shrink-0 w-auto px-2 py-3 whitespace-nowrap h-6 text-xs"
           >
             {line}
           </Button>
