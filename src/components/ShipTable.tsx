@@ -116,14 +116,14 @@ export const ShipTable = ({ data }: ShipTableProps) => {
   return (
     <div className="space-y-2">
       {/* 라인별 필터 */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 flex-wrap">
+        <div className="flex items-center gap-1">
           <Building2 className="h-3 w-3 text-muted-foreground shrink-0" />
           <Button
             variant={filterLine.size === 0 ? "default" : "outline"}
             onClick={() => setFilterLine(new Set())}
             size="sm"
-            className="shrink-0 w-auto px-3 py-3 h-7 text-xs"
+            className="shrink-0 w-auto px-3 py-3 h-6 text-xs"
           >
             전체 라인
           </Button>
@@ -134,7 +134,7 @@ export const ShipTable = ({ data }: ShipTableProps) => {
             variant={filterLine.has(line) ? "default" : "outline"}
             onClick={() => toggleLineFilter(line)}
             size="sm"
-            className="shrink-0 whitespace-nowrap h-7 text-xs"
+            className="shrink-0 w-auto px-3 py-3 whitespace-nowrap h-6 text-xs"
           >
             {line}
           </Button>
