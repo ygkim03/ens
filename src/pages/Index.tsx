@@ -91,7 +91,7 @@ const Index = () => {
         <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
           이엔에스마린 도선 모니터링
         </h1>
-        <p className="text-sm text-muted-foreground">부산신항 실시간 스케줄</p>
+        <p className="mt-2 text-sm text-muted-foreground">부산신항 실시간 스케줄</p>
       </div>
     </div>
 
