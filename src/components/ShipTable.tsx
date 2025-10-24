@@ -251,6 +251,10 @@ export const ShipTable = ({ data }: ShipTableProps) => {
                         <span className="font-medium">{ship.side}</span>
                       </div>
                       <div>
+                        <span className="text-muted-foreground">Pilot:</span>{" "}
+                        <span className="font-medium">{ship.pt}</span>
+                      </div>
+                      <div>
                         <span className="text-muted-foreground">Call Sign:</span>{" "}
                         <span className="font-medium">{ship.callSign}</span>
                       </div>
