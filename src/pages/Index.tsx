@@ -96,7 +96,7 @@ const Index = () => {
     </div>
 
     {/* 버튼 박스: 오른쪽 하단 고정 */}
-    <div className="absolute bottom-2 right-1 flex gap-2">
+    <div className="absolute bottom-2 right-2 flex gap-1">
       <Button
         variant="outline"
         size="sm"
