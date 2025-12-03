@@ -21,5 +21,21 @@ export interface ShipSchedule {
   rmkTeam?: string;
   rmkAgent?: string;
   isSpecial: boolean;
-  pt: string;
+  pt?: string;
+}
+
+export interface Worker {
+  group: string;
+  name: string;
+  shift: string;
+}
+
+export interface WorkerData {
+  date: string;
+  weekday: string;
+  totalWorkers: number;
+  ensCount: number;
+  westCount: number;
+  ensWorkers: Worker[];
+  westWorkers: Worker[];
 }
