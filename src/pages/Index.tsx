@@ -1,8 +1,9 @@
 import { ShipTable } from "@/components/ShipTable";
-import { Ship, Waves, RefreshCw } from "lucide-react";
+import { Ship, Waves, RefreshCw, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ShipSchedule, WorkerData } from "@/types/ship";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const API_URL = "https://yellow-truth-54a3.rladudrnr03.workers.dev/";
 const WORKER_API_URL = "https://script.google.com/macros/s/AKfycbx5DMnZQDDeqHFA5vRvKC-XvmXbN7mxBsx5O2S_uET9RikN0CM_tIumFg3Ht5PBbHwgpQ/exec";
@@ -109,15 +110,25 @@ const Index = () => {
         </h1>
         <p className="mt-1 text-base text-muted-foreground">부산신항 실시간 스케줄</p>
         {workerData && (
-          <div className="mt-2 text-xs text-muted-foreground space-y-0.5">
-            <p className="font-medium text-foreground">{workerData.date} ({workerData.weekday})</p>
-            <p>
-              <span className="font-semibold text-primary">이엔에스마린</span> ({workerData.ensCount}명) : {workerData.ensWorkers.map(w => w.name).join(', ')}
-            </p>
-            <p>
-              <span className="font-semibold text-accent">웨스턴마린</span> ({workerData.westCount}명) : {workerData.westWorkers.map(w => w.name).join(', ')}
-            </p>
-          </div>
+          <Collapsible className="mt-2">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="font-medium text-foreground">{workerData.date} ({workerData.weekday})</span>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-5 px-2 py-0 text-xs text-muted-foreground hover:text-foreground">
+                  오늘 근무자명단
+                  <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+            <CollapsibleContent className="mt-1 text-xs text-muted-foreground space-y-0.5">
+              <p>
+                <span className="font-semibold text-primary">이엔에스마린</span> ({workerData.ensCount}명) : {workerData.ensWorkers.map(w => w.name).join(', ')}
+              </p>
+              <p>
+                <span className="font-semibold text-accent">웨스턴마린</span> ({workerData.westCount}명) : {workerData.westWorkers.map(w => w.name).join(', ')}
+              </p>
+            </CollapsibleContent>
+          </Collapsible>
         )}
       </div>
     </div>
