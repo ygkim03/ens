@@ -131,7 +131,7 @@ const Index = () => {
           </div>
         </div>
         {workerData && (
-          <Collapsible className="mt-2">
+          <Collapsible className="mt-1">
             <div className="flex items-center gap-2 text-xs">
               <span className="font-medium text-foreground">{workerData.date} ({workerData.weekday})</span>
               <CollapsibleTrigger asChild>
@@ -141,7 +141,7 @@ const Index = () => {
                 </Button>
               </CollapsibleTrigger>
             </div>
-            <CollapsibleContent className="mt-1 text-xs text-muted-foreground space-y-0.5">
+            <CollapsibleContent className="text-xs text-muted-foreground space-y-0">
               <p>
                 <span className="font-semibold text-primary">이엔에스마린</span> ({workerData.ensCount}명) : {workerData.ensWorkers.map(w => w.name).join(', ')}
               </p>
