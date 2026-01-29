@@ -16,7 +16,7 @@ const TERMINAL_BUTTONS = [
   { name: "BNCT", url: "https://info.bnctkorea.com/esvc/vessel/berthScheduleG" },
   { name: "BCT", url: "https://info.bct2-4.com/infoservice/index.html" },
   { name: "DGT", url: "https://info.dgtbusan.com/DGT/esvc/vessel/berthScheduleG" },
-  { name: "신항AIS", url: "https://www.marinetraffic.com/en/ais/home/centerx:128.788/centery:35.056/zoom:13" },
+  { name: "신항AIS", url: "https://www.marinetraffic.com/en/ais/home/centerx:128.807/centery:35.063/zoom:13" },
   { name: "북항AIS", url: "https://www.marinetraffic.com/en/ais/home/centerx:129.086/centery:35.111/zoom:14" },
 ];
 
