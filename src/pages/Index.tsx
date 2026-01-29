@@ -169,17 +169,17 @@ const Index = () => {
                 type="single" 
                 value={selectedArea} 
                 onValueChange={handleAreaChange}
-                className="ml-auto"
+                className="ml-auto border rounded-md"
               >
                 <ToggleGroupItem 
                   value="all" 
-                  className="h-5 px-2 text-[10px] data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="h-5 px-2 text-[10px] border-r data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 >
                   전체
                 </ToggleGroupItem>
                 <ToggleGroupItem 
                   value="sinhang" 
-                  className="h-5 px-2 text-[10px] data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="h-5 px-2 text-[10px] border-r data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 >
                   신항
                 </ToggleGroupItem>
