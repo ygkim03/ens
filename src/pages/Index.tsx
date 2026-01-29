@@ -17,6 +17,7 @@ const TERMINAL_BUTTONS = [
   { name: "BCT", url: "https://info.bct2-4.com/infoservice/index.html" },
   { name: "DGT", url: "https://info.dgtbusan.com/DGT/esvc/vessel/berthScheduleG" },
   { name: "신항AIS", url: "https://www.marinetraffic.com/en/ais/home/centerx:128.788/centery:35.056/zoom:13" },
+  { name: "북항AIS", url: "https://www.marinetraffic.com/en/ais/home/centerx:129.086/centery:35.111/zoom:14" },
 ];
 
 const Index = () => {
@@ -109,7 +110,7 @@ const Index = () => {
           이엔에스마린 도선 모니터링
         </h1>
         <div className="mt-1 flex items-center justify-between">
-          <p className="text-base text-muted-foreground">부산신항 실시간 스케줄</p>
+          <p className="text-base text-muted-foreground">부산항 실시간 스케줄</p>
           <div className="flex gap-1">
             <Button
               variant="outline"
@@ -118,6 +119,14 @@ const Index = () => {
               className="h-6 w-auto px-2 py-2 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
             >
               신항AIS
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(TERMINAL_BUTTONS[8].url, "_blank")}
+              className="h-6 w-auto px-2 py-2 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
+            >
+              북항AIS
             </Button>
             <Button
               variant="outline"
@@ -163,7 +172,7 @@ const Index = () => {
         <div className="mb-2">
           <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
             <div className="flex gap-1 min-w-max pb-1">
-              {TERMINAL_BUTTONS.slice(0, 7).map((terminal) => (
+              {TERMINAL_BUTTONS.slice(0, 8).map((terminal) => (
                 <Button
                   key={terminal.name}
                   variant="outline"
