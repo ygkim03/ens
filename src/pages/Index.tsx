@@ -4,8 +4,13 @@ import { useState, useEffect } from "react";
 import { ShipSchedule, WorkerData } from "@/types/ship";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-const API_URL = "https://yellow-truth-54a3.rladudrnr03.workers.dev/";
+const API_URLS = {
+  all: "https://yellow-truth-54a3.rladudrnr03.workers.dev/",
+  sinhang: "https://dark-resonance-e1c6.rladudrnr03.workers.dev/",
+  bukhang: "https://falling-pond-0776.rladudrnr03.workers.dev/",
+};
 const WORKER_API_URL = "https://script.google.com/macros/s/AKfycbwvUCyqCKwDl6DylgjTk8CuuAm77gx-ChRnjPmrpdIGBUIwcSz4Jb9VVoLrdZLvLSVKLw/exec";
 
 const TERMINAL_BUTTONS = [
@@ -20,10 +25,13 @@ const TERMINAL_BUTTONS = [
   { name: "북항AIS", url: "https://www.marinetraffic.com/en/ais/home/centerx:129.077/centery:35.112/zoom:13" },
 ];
 
+type AreaTab = "all" | "sinhang" | "bukhang";
+
 const Index = () => {
   const [shipData, setShipData] = useState<ShipSchedule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [workerData, setWorkerData] = useState<WorkerData | null>(null);
+  const [selectedArea, setSelectedArea] = useState<AreaTab>("all");
 
   const fetchWorkerData = async () => {
     try {
@@ -36,10 +44,10 @@ const Index = () => {
     }
   };
 
-  const fetchShipData = async () => {
+  const fetchShipData = async (area: AreaTab = selectedArea) => {
     setIsLoading(true);
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(API_URLS[area], {
         mode: 'cors',
         headers: {
           'Accept': 'application/json',
@@ -89,6 +97,13 @@ const Index = () => {
     }
   };
 
+  const handleAreaChange = (value: string) => {
+    if (value && (value === "all" || value === "sinhang" || value === "bukhang")) {
+      setSelectedArea(value);
+      fetchShipData(value);
+    }
+  };
+
   useEffect(() => {
     fetchShipData();
     fetchWorkerData();
@@ -131,7 +146,7 @@ const Index = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={fetchShipData}
+              onClick={() => fetchShipData()}
               className="gap-2 h-6 w-auto px-2 py-2 text-xs rounded-lg"
             >
               <RefreshCw className="h-3 w-3" />
@@ -185,6 +200,35 @@ const Index = () => {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Area Toggle Buttons */}
+        <div className="mb-3">
+          <ToggleGroup 
+            type="single" 
+            value={selectedArea} 
+            onValueChange={handleAreaChange}
+            className="justify-start"
+          >
+            <ToggleGroupItem 
+              value="all" 
+              className="h-7 px-3 text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+            >
+              전체
+            </ToggleGroupItem>
+            <ToggleGroupItem 
+              value="sinhang" 
+              className="h-7 px-3 text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+            >
+              신항
+            </ToggleGroupItem>
+            <ToggleGroupItem 
+              value="bukhang" 
+              className="h-7 px-3 text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+            >
+              북항/감천
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
 
         {isLoading ? (
