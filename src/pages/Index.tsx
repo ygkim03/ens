@@ -164,6 +164,32 @@ const Index = () => {
                   <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
                 </Button>
               </CollapsibleTrigger>
+              {/* Area Toggle Buttons */}
+              <ToggleGroup 
+                type="single" 
+                value={selectedArea} 
+                onValueChange={handleAreaChange}
+                className="ml-auto"
+              >
+                <ToggleGroupItem 
+                  value="all" 
+                  className="h-5 px-2 text-[10px] data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  전체
+                </ToggleGroupItem>
+                <ToggleGroupItem 
+                  value="sinhang" 
+                  className="h-5 px-2 text-[10px] data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  신항
+                </ToggleGroupItem>
+                <ToggleGroupItem 
+                  value="bukhang" 
+                  className="h-5 px-2 text-[10px] data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  북항/감천
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
             <CollapsibleContent className="text-xs text-muted-foreground space-y-0">
               <p>
@@ -202,34 +228,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Area Toggle Buttons */}
-        <div className="mb-3">
-          <ToggleGroup 
-            type="single" 
-            value={selectedArea} 
-            onValueChange={handleAreaChange}
-            className="justify-start"
-          >
-            <ToggleGroupItem 
-              value="all" 
-              className="h-7 px-3 text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-            >
-              전체
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="sinhang" 
-              className="h-7 px-3 text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-            >
-              신항
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="bukhang" 
-              className="h-7 px-3 text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-            >
-              북항/감천
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
 
         {isLoading ? (
           <div className="text-center py-12">
