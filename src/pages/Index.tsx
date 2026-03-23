@@ -13,6 +13,8 @@ const API_URLS = {
 };
 const WORKER_API_URL = "https://script.google.com/macros/s/AKfycbwvUCyqCKwDl6DylgjTk8CuuAm77gx-ChRnjPmrpdIGBUIwcSz4Jb9VVoLrdZLvLSVKLw/exec";
 
+type AreaTab = "all" | "sinhang" | "bukhang";
+
 const TERMINAL_BUTTONS = [
   { name: "PNIT", url: "https://www.pnitl.com/infoservice/vessel/vslScheduleChart.jsp" },
   { name: "PNC", url: "https://svc.pncport.com/info/CMS/Ship/ShipBerthCNew.pnc?mCode=MN105" },
@@ -24,8 +26,6 @@ const TERMINAL_BUTTONS = [
   { name: "신항AIS", url: "https://www.marinetraffic.com/en/ais/home/centerx:128.807/centery:35.063/zoom:13" },
   { name: "북항AIS", url: "https://www.marinetraffic.com/en/ais/home/centerx:129.077/centery:35.112/zoom:13" },
 ];
-
-type AreaTab = "all" | "sinhang" | "bukhang";
 
 const Index = () => {
   const [shipData, setShipData] = useState<ShipSchedule[]>([]);
@@ -103,7 +103,7 @@ const Index = () => {
       fetchShipData(value);
     }
   };
-
+  
   useEffect(() => {
     fetchShipData();
     fetchWorkerData();
@@ -131,7 +131,7 @@ const Index = () => {
               variant="outline"
               size="sm"
               onClick={() => window.open(TERMINAL_BUTTONS[7].url, "_blank")}
-              className="h-6 w-auto px-2 py-2 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
+              className="h-5 w-auto px-1 py-2 text-[10.5px] bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
             >
               신항AIS
             </Button>
@@ -139,7 +139,7 @@ const Index = () => {
               variant="outline"
               size="sm"
               onClick={() => window.open(TERMINAL_BUTTONS[8].url, "_blank")}
-              className="h-6 w-auto px-2 py-2 text-xs bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
+              className="h-5 w-auto px-1 py-2 text-[10.5px] bg-red-500 text-white hover:bg-red-600 border-red-500 rounded-lg"
             >
               북항AIS
             </Button>
@@ -147,20 +147,24 @@ const Index = () => {
               variant="outline"
               size="sm"
               onClick={() => fetchShipData()}
-              className="gap-2 h-6 w-auto px-2 py-2 text-xs rounded-lg"
+              className="gap-1 h-5 w-auto px-1 py-2 text-[10.5px] rounded-lg"
             >
-              <RefreshCw className="h-3 w-3" />
+              <RefreshCw className="h-0.5 w-0.5" />
               새로고침
             </Button>
           </div>
         </div>
-        {workerData && (
-          <Collapsible className="mt-1">
+
+      </div>
+
+    </div>
+                  {workerData && (
+          <Collapsible className="mt-2">
             <div className="flex items-center gap-2 text-xs">
               <span className="font-medium text-foreground">{workerData.date} ({workerData.weekday})</span>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-5 px-2 py-0 text-xs text-muted-foreground hover:text-foreground">
-                  오늘 근무자명단
+                  오늘 근무자
                   <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
                 </Button>
               </CollapsibleTrigger>
@@ -169,40 +173,46 @@ const Index = () => {
                 type="single" 
                 value={selectedArea} 
                 onValueChange={handleAreaChange}
-                className="ml-auto border rounded-md"
+                className="ml-auto"
               >
                 <ToggleGroupItem 
                   value="all" 
-                  className="h-5 px-2 text-[10px] border-r data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="h-5 px-2 text-[10px] border data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 >
-                  전체
+                  부산 전체
                 </ToggleGroupItem>
                 <ToggleGroupItem 
                   value="sinhang" 
-                  className="h-5 px-2 text-[10px] border-r data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="h-5 px-2 text-[10px] border data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 >
                   신항
                 </ToggleGroupItem>
                 <ToggleGroupItem 
                   value="bukhang" 
-                  className="h-5 px-2 text-[10px] data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="h-5 px-2 text-[10px] border data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                 >
                   북항/감천
                 </ToggleGroupItem>
               </ToggleGroup>
+              
             </div>
-            <CollapsibleContent className="text-xs text-muted-foreground space-y-0">
+            <CollapsibleContent className="mt-1 text-xs text-muted-foreground space-y-0.5">
               <p>
-                <span className="font-semibold text-primary">이엔에스마린</span> ({workerData.ensCount}명) : {workerData.ensWorkers.map(w => w.name).join(', ')}
+                <span className="font-semibold text-primary">ENS</span> ({workerData.ensCount}명)
+                {workerData.ensStatus === "교대 전" && (
+                <span className="text-yellow-600 ml-1">(교대 전)</span>
+                )} : 
+                <span className="text-[11px] leading-tight ml-1">{workerData.ensWorkers.map(w => w.name).join(', ')}
+                   </span>
               </p>
               <p>
-                <span className="font-semibold text-accent">웨스턴마린</span> ({workerData.westCount}명) : {workerData.westWorkers.map(w => w.name).join(', ')}
+                <span className="font-semibold text-accent">웨스턴</span> ({workerData.westCount}명){workerData.westStatus === "교대 전" && (
+                <span className="text-yellow-600 ml-1">(교대 전)</span>
+                )} : {workerData.westWorkers.map(w => w.name).join(', ')}
               </p>
             </CollapsibleContent>
           </Collapsible>
         )}
-      </div>
-    </div>
   </div>
 </header>
 
@@ -213,7 +223,7 @@ const Index = () => {
         <div className="mb-2">
           <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
             <div className="flex gap-1 min-w-max pb-1">
-              {TERMINAL_BUTTONS.slice(0, 8).map((terminal) => (
+              {TERMINAL_BUTTONS.slice(0, 7).map((terminal) => (
                 <Button
                   key={terminal.name}
                   variant="outline"
@@ -227,7 +237,6 @@ const Index = () => {
             </div>
           </div>
         </div>
-
 
         {isLoading ? (
           <div className="text-center py-12">
