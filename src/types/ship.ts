@@ -38,4 +38,6 @@ export interface WorkerData {
   westCount: number;
   ensWorkers: Worker[];
   westWorkers: Worker[];
+  ensStatus: string;
+  westStatus: string;
 }
