@@ -248,7 +248,7 @@ const Index = () => {
             className="h-7 text-[12px] px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
           >
             <MessageSquare className="h-3 w-3 mr-1" />
-            익명 게시판
+            익명 건의 게시판
           </Button>
         </div>
 
@@ -277,7 +277,7 @@ const Index = () => {
             <div className="flex items-center justify-between px-4 py-2 border-b">
               <span className="flex items-center gap-2 font-semibold text-sm">
                 <MessageSquare className="h-4 w-4 text-blue-600" />
-                익명 소통방
+                익명 건의 게시판
               </span>
               <Button
                 variant="ghost"
