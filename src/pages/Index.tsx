@@ -239,15 +239,16 @@ const Index = () => {
           </div>
         </div>
 
-        {/* 익명 건의 게시판 */}
+        {/* 익명 게시판 버튼 */}
         <div className="mb-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => window.open('https://western-6281b.web.app/', '_blank')}
-            className="h-7 text-[12px] px-3 py-1 rounded-md"
+            onClick={() => setIsBoardOpen(true)}
+            className="h-7 text-[12px] px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
           >
-            익명 건의 게시판
+            <MessageSquare className="h-3 w-3 mr-1" />
+            익명 게시판
           </Button>
         </div>
 
