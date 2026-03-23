@@ -220,23 +220,31 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-3 max-w-6xl min-h-[calc(100vh-280px)]">
         {/* Terminal Buttons */}
-        <div className="mb-2">
-          <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
-            <div className="flex gap-1 min-w-max pb-1">
-              {TERMINAL_BUTTONS.slice(0, 7).map((terminal) => (
-                <Button
-                  key={terminal.name}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.open(terminal.url, '_blank')}
-                  className="h-6 text-[12px] whitespace-nowrap min-w-[45px] px-2 py-1 rounded-md"
-                >
-                  {terminal.name}
-                </Button>
-              ))}
+        <Collapsible className="mb-2">
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-6 px-2 py-0 text-xs text-muted-foreground hover:text-foreground">
+              터미널 바로가기
+              <ChevronDown className="h-3 w-3 ml-1 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 mt-1">
+              <div className="flex gap-1 min-w-max pb-1">
+                {TERMINAL_BUTTONS.slice(0, 7).map((terminal) => (
+                  <Button
+                    key={terminal.name}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(terminal.url, '_blank')}
+                    className="h-6 text-[12px] whitespace-nowrap min-w-[45px] px-2 py-1 rounded-md"
+                  >
+                    {terminal.name}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         {isLoading ? (
           <div className="text-center py-12">
