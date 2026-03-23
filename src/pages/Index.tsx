@@ -269,6 +269,33 @@ const Index = () => {
           <p className="text-xs mt-1">실시간 업데이트</p>
         </div>
       </footer>
+
+      {/* 익명 게시판 팝업 (iframe) */}
+      {isBoardOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-background rounded-lg shadow-xl w-full max-w-lg h-[80vh] flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2 border-b">
+              <span className="flex items-center gap-2 font-semibold text-sm">
+                <MessageSquare className="h-4 w-4 text-blue-600" />
+                익명 소통방
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsBoardOpen(false)}
+                className="h-8 px-2 text-muted-foreground hover:text-destructive"
+              >
+                <X className="h-4 w-4" /> 닫기
+              </Button>
+            </div>
+            <iframe
+              src="https://western-6281b.web.app/"
+              className="flex-1 w-full border-0"
+              title="익명 게시판"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
