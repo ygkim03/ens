@@ -32,6 +32,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [workerData, setWorkerData] = useState<WorkerData | null>(null);
   const [selectedArea, setSelectedArea] = useState<AreaTab>("all");
+  const [isBoardOpen, setIsBoardOpen] = useState(false);
 
   const fetchWorkerData = async () => {
     try {
