@@ -257,10 +257,9 @@ const Index = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => window.open('https://open.kakao.com/o/skj4Ejni)}
+            onClick={() => window.open('https://open.kakao.com/o/skj4Ejni')}
             className="h-7 text-[12px] px-3 py-1 rounded-md"
           >
-            <MessageCircleWarning className="h-3 w-3 mr-1" />
             1:1 익명 건의
           </Button>
         </div>
