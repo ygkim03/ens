@@ -252,6 +252,18 @@ const Index = () => {
           </Button>
         </div>
 
+                {/* 1:1 익명 카톡방 */}
+        <div className="mb-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open('https://open.kakao.com/o/skj4Ejni)}
+            className="h-7 text-[12px] px-3 py-1 rounded-md"
+          >
+            1:1 익명 건의
+          </Button>
+        </div>
+
         {isLoading ? (
           <div className="text-center py-12">
             <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
