@@ -1,5 +1,5 @@
 import { ShipTable } from "@/components/ShipTable";
-import { Ship, Waves, RefreshCw, ChevronDown, MessageSquare, X } from "lucide-react";
+import { Ship, Waves, RefreshCw, ChevronDown, MessageSquare, MessageCircleWarning, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ShipSchedule, WorkerData } from "@/types/ship";
 import { Button } from "@/components/ui/button";
