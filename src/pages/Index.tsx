@@ -239,8 +239,8 @@ const Index = () => {
           </div>
         </div>
 
-        {/* 익명 게시판 버튼 */}
-        <div className="mb-2">
+        {/* 익명 게시판 + 1:1 건의 버튼 */}
+        <div className="mb-2 flex gap-1">
           <Button
             variant="outline"
             size="sm"
@@ -250,14 +250,10 @@ const Index = () => {
             <MessageSquare className="h-3 w-3 mr-1" />
             익명 건의 게시판
           </Button>
-        </div>
-
-                {/* 1:1 익명 카톡방 */}
-        <div className="mb-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => window.open('https://open.kakao.com/o/skj4Ejni')}
+            onClick={() => window.open('https://open.kakao.com/o/skj4Ejni', '_blank')}
             className="h-7 text-[12px] px-3 py-1 rounded-md"
           >
             1:1 익명 건의
