@@ -199,12 +199,19 @@ const Index = () => {
             </div>
             <CollapsibleContent className="mt-1 text-xs text-muted-foreground space-y-0.5">
               <p>
-                <span className="font-semibold text-primary">ENS</span> ({workerData.ensCount}명)
-                {workerData.ensStatus === "교대 전" && (
-                <span className="text-yellow-600 ml-1">(교대 전)</span>
-                )} : 
-                <span className="text-[11px] leading-tight ml-1">{workerData.ensWorkers.map(w => w.name).join(', ')}
-                   </span>
+                <div className="flex text-xs text-muted-foreground">
+                  <div className="shrink-0">
+                    <span className="font-semibold text-primary">ENS</span>
+                    ({workerData.ensCount}명)
+                    {workerData.ensStatus === "교대 전" && (
+                      <span className="text-yellow-600 ml-1">(교대 전)</span>
+                    )}
+                    :
+                  </div>
+                  <div className="ml-2 flex-1 break-keep">
+                    {workerData.ensWorkers.map(w => w.name).join(', ')}
+                  </div>
+                </div>
               </p>
               <p>
                 <span className="font-semibold text-accent">웨스턴</span> ({workerData.westCount}명){workerData.westStatus === "교대 전" && (
