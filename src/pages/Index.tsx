@@ -126,7 +126,7 @@ const EmployeeCard = ({ employee, onClose }: { employee: EmployeeCardData; onClo
 
         {/* 전화 버튼 */}
         <div className="px-5 pb-4">
-          
+          <a
             href={`tel:${employee.phone}`}
             className="block w-full text-center py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
           >
