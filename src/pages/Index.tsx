@@ -86,18 +86,18 @@ const EmployeeCard = ({ employee, onClose }: { employee: EmployeeCardData; onClo
         className="bg-background rounded-xl shadow-2xl w-full max-w-xs overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 카드 헤더 */}
-        <div className={`px-5 py-4 flex items-center justify-between ${employee.company === 'ENS' ? 'bg-blue-600' : 'bg-indigo-700'}`}>
+        {/* 카드 헤더 — 진한 파랑 → 부드러운 slate/gray 계열 */}
+        <div className="px-5 py-4 flex items-center justify-between bg-slate-700">
           <div className="flex items-center gap-3">
-            <div className="bg-white/20 rounded-full p-2">
-              <UserCircle className="h-8 w-8 text-white" />
+            <div className="bg-white/15 rounded-full p-2">
+              <UserCircle className="h-8 w-8 text-white/80" />
             </div>
             <div>
-              <p className="text-white/70 text-xs">{employee.company}</p>
+              <p className="text-white/60 text-xs font-medium tracking-wide">{employee.company}</p>
               <p className="text-white font-bold text-lg leading-tight">{employee.name}</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-white/70 hover:text-white">
+          <button onClick={onClose} className="text-white/50 hover:text-white transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -106,7 +106,7 @@ const EmployeeCard = ({ employee, onClose }: { employee: EmployeeCardData; onClo
         <div className="px-5 py-4 space-y-3">
           <div className="flex items-center gap-3">
             <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
-            <a href={`tel:${employee.phone}`} className="text-sm font-medium text-blue-600 hover:underline">
+            <a href={`tel:${employee.phone}`} className="text-sm font-medium text-foreground hover:underline">
               {employee.phone}
             </a>
           </div>
@@ -124,13 +124,14 @@ const EmployeeCard = ({ employee, onClose }: { employee: EmployeeCardData; onClo
           )}
         </div>
 
-        {/* 전화 버튼 */}
-        <div className="px-5 pb-4">
-          <a
+        {/* 전화 버튼 — 빨강 제거, 차분한 스타일 */}
+        <div className="px-5 pb-5">
+          
             href={`tel:${employee.phone}`}
-            className="block w-full text-center py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors"
           >
-            📞 전화하기
+            <Phone className="h-4 w-4" />
+            전화하기
           </a>
         </div>
       </div>
@@ -326,7 +327,7 @@ const Index = () => {
                       <span key={w.name}>
                         <button
                           onClick={() => handleWorkerClick(w.name)}
-                          className="text-primary hover:underline hover:text-primary/80 font-medium cursor-pointer"
+                          className="hover:underline cursor-pointer"
                         >
                           {w.name}
                         </button>
@@ -348,7 +349,7 @@ const Index = () => {
                       <span key={w.name}>
                         <button
                           onClick={() => handleWorkerClick(w.name)}
-                          className="text-accent hover:underline hover:text-accent/80 font-medium cursor-pointer"
+                          className="hover:underline cursor-pointer"
                         >
                           {w.name}
                         </button>
