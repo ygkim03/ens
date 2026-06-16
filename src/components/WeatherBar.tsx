@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Thermometer, Wind, Droplets, Cloud } from "lucide-react";
 
 const WEATHER_API_URL = "https://round-thunder-8301.rladudrnr03.workers.dev/";
@@ -107,11 +107,6 @@ export const WeatherBar = () => {
   const [forecast, setForecast] = useState<DailyForecast[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 💡 두 줄의 마퀴 속도를 동기화하기 위한 설정
-  const row1Ref = useRef<HTMLDivElement>(null);
-  const row2Ref = useRef<HTMLDivElement>(null);
-  const [durations, setDurations] = useState({ row1: "30s", row2: "30s" });
-
   useEffect(() => {
     const load = async () => {
       try {
@@ -127,25 +122,6 @@ export const WeatherBar = () => {
     };
     load();
   }, []);
-
-  // 💡 데이터가 로드된 후 실제 너비를 측정하여 '동일한 픽셀 속도'로 애니메이션 시간(duration) 계산
-  useEffect(() => {
-    if (!loading && current) {
-      const PIXELS_PER_SECOND = 40; // ⚙️ 속도 조절: 숫자가 클수록 빨라집니다.
-      
-      const w1 = row1Ref.current?.scrollWidth || 0;
-      const w2 = row2Ref.current?.scrollWidth || 0;
-
-      // translateX(-50%) 이동하므로 실제 이동 거리는 전체 너비의 절반입니다.
-      const d1 = w1 / 2;
-      const d2 = w2 / 2;
-
-      setDurations({
-        row1: d1 > 0 ? `${d1 / PIXELS_PER_SECOND}s` : "30s",
-        row2: d2 > 0 ? `${d2 / PIXELS_PER_SECOND}s` : "30s",
-      });
-    }
-  }, [loading, current, forecast]);
 
   if (loading) {
     return (
@@ -163,143 +139,99 @@ export const WeatherBar = () => {
     );
   }
 
-  const interleave = (itemsArray: React.ReactNode[]) => {
-    const out: React.ReactNode[] = [];
-    itemsArray.forEach((it, i) => {
-      out.push(it);
-      if (i < itemsArray.length - 1) {
-        out.push(<span key={`s${i}`} className="text-blue-300 px-1">|</span>);
-      }
-    });
-    return out;
-  };
-
-  // 1. 윗줄 아이템 구성 (현재 상태 + 오늘 예보)
-  const todayItems: React.ReactNode[] = [];
+  const items: React.ReactNode[] = [];
   if (current.minmax) {
-    todayItems.push(<span key="minmax" className="text-muted-foreground">{current.minmax}</span>);
+    items.push(<span key="minmax" className="text-muted-foreground">{current.minmax}</span>);
   }
-  todayItems.push(
+  items.push(
     <span key="hum" className="inline-flex items-center gap-1">
       <Droplets className="h-3 w-3 text-blue-500" />습도 {current.humidity}
     </span>
   );
-  todayItems.push(
+  items.push(
     <span key="wind" className="inline-flex items-center gap-1">
       <Wind className="h-3 w-3 text-sky-500" />바람 {current.wind}
     </span>
   );
-  todayItems.push(
+  items.push(
     <span key="pm25" className="inline-flex items-center gap-1">
       <Cloud className="h-3 w-3 text-slate-500" />초미세 {current.pm25.val}
       <span className={airColor(current.pm25.level) + " font-semibold"}>{current.pm25.level}</span>
     </span>
   );
-  todayItems.push(
+  items.push(
     <span key="pm10" className="inline-flex items-center gap-1">
       <Cloud className="h-3 w-3 text-slate-500" />미세 {current.pm10.val}
       <span className={airColor(current.pm10.level) + " font-semibold"}>{current.pm10.level}</span>
     </span>
   );
-
-  const todayForecast = forecast.find((f) => f.label === "오늘");
-  if (todayForecast) {
-    todayItems.push(
-      <span key="f-today" className="inline-flex items-center gap-1">
-        <strong className="text-blue-700">{todayForecast.label}</strong>
-        <span className="text-muted-foreground">{todayForecast.dayLabel}</span>
-        <span>오전 {todayForecast.amWeather}({todayForecast.amPop})</span>
-        <span>오후 {todayForecast.pmWeather}({todayForecast.pmPop})</span>
+  forecast.forEach((f) => {
+    items.push(
+      <span key={f.label} className="inline-flex items-center gap-1">
+        <strong className="text-blue-700">{f.label}</strong>
+        <span className="text-muted-foreground">{f.dayLabel}</span>
+        <span>오전 {f.amWeather}({f.amPop})</span>
+        <span>오후 {f.pmWeather}({f.pmPop})</span>
+        <span className="text-muted-foreground">{f.min}/{f.max}</span>
       </span>
     );
-  }
+  });
   if (current.diff) {
-    todayItems.push(<span key="diff" className="text-muted-foreground">{current.diff}</span>);
+    items.push(<span key="diff" className="text-muted-foreground">{current.diff}</span>);
   }
-  const todayInterleaved = interleave(todayItems);
 
-  // 2. 아랫줄 아이템 구성 (내일 예보)
-  const tomorrowItems: React.ReactNode[] = [];
-  const tomorrowForecast = forecast.find((f) => f.label === "내일");
-  if (tomorrowForecast) {
-    tomorrowItems.push(
-      <span key="f-tomorrow" className="inline-flex items-center gap-1">
-        <strong className="text-blue-700">{tomorrowForecast.label}</strong>
-        <span className="text-muted-foreground">{tomorrowForecast.dayLabel}</span>
-        <span>오전 {tomorrowForecast.amWeather}({tomorrowForecast.amPop})</span>
-        <span>오후 {tomorrowForecast.pmWeather}({tomorrowForecast.pmPop})</span>
-        <span className="text-muted-foreground">{tomorrowForecast.min}/{tomorrowForecast.max}</span>
-      </span>
-    );
-  }
-  const tomorrowInterleaved = interleave(tomorrowItems);
-
-  const chillText = current.chill ? current.chill.replace(/체감\(|\)/g, "") : "";
-
-  // 반복용 재사용 마퀴 세트 컴포넌트
-  const MarqueeSet = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center gap-2 px-2">
-      {children}
-      <span className="text-blue-300 px-1">|</span>
-    </div>
+  const sep = (i: number) => (
+    <span key={`s${i}`} className="text-blue-300 px-1">|</span>
   );
 
+  const interleaved: React.ReactNode[] = [];
+  items.forEach((it, i) => {
+    interleaved.push(it);
+    if (i < items.length - 1) interleaved.push(sep(i));
+  });
+
+  const chillText = current.chill ? current.chill.replace(/체감\(|\)|℃/g, "") : "";
+
   return (
-    <div className="mb-2 rounded-md bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-100 overflow-hidden flex flex-col">
+    <div className="mb-2 rounded-md bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-100 overflow-hidden">
       <style>{`
         .weather-marquee {
-          animation: marquee linear infinite;
-        }
-        .weather-marquee:hover {
-          animation-play-state: paused;
+          animation: marquee 60s linear infinite;
         }
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
       `}</style>
-
-      {/* ─── 윗줄: 기온 고정 + 오늘 정보 마퀴 ─── */}
-      <div className="h-7 flex items-center border-b border-blue-100/60">
-        {/* 왼쪽 고정 영역 (너비를 w-20으로 맞춰 수직 정렬 유지) */}
-        <div className="w-20 flex-shrink-0 flex items-center gap-1 px-2 border-r border-blue-200 bg-blue-100/40 h-full text-[11px]">
+      <div className="relative h-7 flex items-center">
+        {/* 왼쪽 고정: 기온/체감 */}
+        <div className="flex-shrink-0 flex items-center gap-1.5 px-2 border-r border-blue-200 bg-blue-100/40 h-full text-[11px] ">
           <Thermometer className="h-3 w-3 text-red-500 flex-shrink-0" />
           <strong className="text-foreground whitespace-nowrap">{current.temp}℃</strong>
+          {chillText && (
+            <span className="text-muted-foreground whitespace-nowrap">체감 {chillText}℃</span>
+          )}
         </div>
-        {/* 마퀴 영역 */}
-        <div className="flex-1 overflow-hidden">
-          <div
-            ref={row1Ref}
-            className="weather-marquee w-max flex items-center text-[11px]"
-            style={{ animationDuration: durations.row1 }}
-          >
-            <MarqueeSet>{todayInterleaved}</MarqueeSet>
-            <MarqueeSet>{todayInterleaved}</MarqueeSet>
-          </div>
-        </div>
-      </div>
+        {/* 오른쪽 마퀴 */}
+<div className="flex-1 overflow-hidden">
+  {/* 💡 핵심 1: w-max 추가로 글자 길이에 맞춰 컨테이너 너비 확장 */}
+  <div className="weather-marquee w-max flex items-center text-[11px]">
+    
+    {/* 💡 핵심 2: 두 세트를 각각 동일한 div로 묶어 오차를 없앰 */}
+    {/* 1번 세트 */}
+    <div className="flex items-center gap-2 px-2">
+      {interleaved}
+      <span className="text-blue-300 px-1">|</span>
+    </div>
 
-      {/* ─── 아랫줄: 체감온도 고정 + 내일 정보 마퀴 ─── */}
-      <div className="h-7 flex items-center">
-        {/* 왼쪽 고정 영역 (윗줄과 동일하게 w-20 부여) */}
-        <div className="w-20 flex-shrink-0 flex items-center gap-1 px-2 border-r border-blue-200 bg-blue-100/20 h-full text-[11px]">
-          <Thermometer className="h-3 w-3 text-sky-500 flex-shrink-0" />
-          <span className="text-muted-foreground whitespace-nowrap font-medium text-[10px]">체감 {chillText}</span>
-        </div>
-        {/* 마퀴 영역 */}
-        <div className="flex-1 overflow-hidden">
-          <div
-            ref={row2Ref}
-            className="weather-marquee w-max flex items-center text-[11px]"
-            style={{ animationDuration: durations.row2 }}
-          >
-            {/* 내일 정보는 짧기 때문에 넓은 해상도 대응을 위해 4번 반복 */}
-            <MarqueeSet>{tomorrowInterleaved}</MarqueeSet>
-            <MarqueeSet>{tomorrowInterleaved}</MarqueeSet>
-            <MarqueeSet>{tomorrowInterleaved}</MarqueeSet>
-            <MarqueeSet>{tomorrowInterleaved}</MarqueeSet>
-          </div>
-        </div>
+    {/* 2번 세트 (1번 세트와 완벽히 동일한 구조) */}
+    <div className="flex items-center gap-2 px-2">
+      {interleaved}
+      <span className="text-blue-300 px-1">|</span>
+    </div>
+
+  </div>
+</div>
       </div>
     </div>
   );
