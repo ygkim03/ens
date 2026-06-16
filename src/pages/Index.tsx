@@ -1,5 +1,6 @@
 import { ShipTable } from "@/components/ShipTable";
 import { Ship, Waves, RefreshCw, ChevronDown, MessageSquare, MessageCircleWarning, X, Users, Phone, Clock, Calendar, UserCircle } from "lucide-react";
+import { WeatherBar } from "@/components/WeatherBar";
 import { useState, useEffect } from "react";
 import { ShipSchedule, WorkerData } from "@/types/ship";
 import { Button } from "@/components/ui/button";
