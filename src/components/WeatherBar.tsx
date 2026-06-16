@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Thermometer, Wind, Droplets, Cloud } from "lucide-react";
 
-// TODO: 배포한 Cloudflare Worker URL로 교체하세요
-const WEATHER_API_URL = "https://weather-proxy.rladudrnr03.workers.dev/";
+const WEATHER_API_URL = "https://round-thunder-8301.rladudrnr03.workers.dev/";
 
 interface CurrentWeather {
   temp: string;
