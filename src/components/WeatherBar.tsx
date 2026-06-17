@@ -183,82 +183,66 @@ export const WeatherBar = () => {
   const today = forecast.find((f) => f.label === "오늘");
   const tomorrow = forecast.find((f) => f.label === "내일");
 
-  // 윗줄: 오늘 위주
+  const renderDay = (f: DailyForecast) => (
+    <span className="inline-flex items-center gap-1">
+      <span>오전 {f.amWeather}({f.amPop})</span>
+      <span className="text-blue-300">·</span>
+      <span>오후 {f.pmWeather}({f.pmPop})</span>
+      <span className="text-muted-foreground ml-1">{f.min}/{f.max}</span>
+    </span>
+  );
+
+  // 윗줄: 오늘 + 공기질
   const topItems: React.ReactNode[] = [];
-  if (current.minmax) {
-    topItems.push(<span key="minmax" className="text-muted-foreground">{current.minmax}</span>);
-  }
-  topItems.push(
-    <span key="hum" className="inline-flex items-center gap-1">
-      <Droplets className="h-3 w-3 text-blue-500" />습도 {current.humidity}
-    </span>
-  );
-  topItems.push(
-    <span key="wind" className="inline-flex items-center gap-1">
-      <Wind className="h-3 w-3 text-sky-500" />바람 {current.wind}
-    </span>
-  );
-  topItems.push(
-    <span key="pm25" className="inline-flex items-center gap-1">
-      <Cloud className="h-3 w-3 text-slate-500" />초미세 {current.pm25.val}
-      <span className={airColor(current.pm25.level) + " font-semibold"}>{current.pm25.level}</span>
-    </span>
-  );
-  topItems.push(
-    <span key="pm10" className="inline-flex items-center gap-1">
-      <Cloud className="h-3 w-3 text-slate-500" />미세 {current.pm10.val}
-      <span className={airColor(current.pm10.level) + " font-semibold"}>{current.pm10.level}</span>
-    </span>
-  );
   if (today) {
     topItems.push(
       <span key="today" className="inline-flex items-center gap-1">
         <strong className="text-blue-700">오늘</strong>
-        <span className="text-muted-foreground">{today.dayLabel}</span>
-        <span>오전 {today.amWeather}({today.amPop})</span>
-        <span>오후 {today.pmWeather}({today.pmPop})</span>
-        <span className="text-muted-foreground">{today.min}/{today.max}</span>
+        {renderDay(today)}
       </span>
     );
   }
-  if (current.diff) {
-    topItems.push(<span key="diff" className="text-muted-foreground">{current.diff}</span>);
-  }
+  topItems.push(
+    <span key="pm25" className="inline-flex items-center gap-1">
+      <Cloud className="h-3 w-3 text-slate-500" />초미세
+      <span className={airColor(current.pm25.level) + " font-semibold"}>{current.pm25.level || "-"}</span>
+    </span>
+  );
+  topItems.push(
+    <span key="pm10" className="inline-flex items-center gap-1">
+      <Cloud className="h-3 w-3 text-slate-500" />미세
+      <span className={airColor(current.pm10.level) + " font-semibold"}>{current.pm10.level || "-"}</span>
+    </span>
+  );
 
-  // 아랫줄: 내일 위주
+  // 아랫줄: 내일 + 습도/바람
   const bottomItems: React.ReactNode[] = [];
   if (tomorrow) {
     bottomItems.push(
       <span key="tom" className="inline-flex items-center gap-1">
         <strong className="text-indigo-700">내일</strong>
-        <span className="text-muted-foreground">{tomorrow.dayLabel}</span>
-        <span>오전 {tomorrow.amWeather}({tomorrow.amPop})</span>
-        <span>오후 {tomorrow.pmWeather}({tomorrow.pmPop})</span>
-        <span className="text-muted-foreground">최저 {tomorrow.min} / 최고 {tomorrow.max}</span>
+        {renderDay(tomorrow)}
       </span>
     );
   }
-  if (current.rain) {
+  const humShort = current.humidity?.replace(/\s+/g, "") || "";
+  if (humShort) {
     bottomItems.push(
-      <span key="rain" className="inline-flex items-center gap-1">
-        <Droplets className="h-3 w-3 text-blue-500" />강수 {current.rain}
+      <span key="hum" className="inline-flex items-center gap-1">
+        <Droplets className="h-3 w-3 text-blue-500" />{humShort}
       </span>
     );
   }
-  if (current.o3?.val && current.o3.val !== "-") {
+  const windShort = current.wind?.replace(/\s+/g, "") || "";
+  if (windShort) {
     bottomItems.push(
-      <span key="o3" className="inline-flex items-center gap-1">
-        <Cloud className="h-3 w-3 text-slate-500" />오존 {current.o3.val}
-        <span className={airColor(current.o3.level) + " font-semibold"}>{current.o3.level}</span>
+      <span key="wind" className="inline-flex items-center gap-1">
+        <Wind className="h-3 w-3 text-sky-500" />{windShort}
       </span>
     );
   }
-  if (current.updated) {
-    bottomItems.push(<span key="upd" className="text-muted-foreground">{current.updated}</span>);
-  }
-  // fallback so bottom row never empty
   if (bottomItems.length === 0 && today) {
-    bottomItems.push(<span key="today-fb" className="text-muted-foreground">오늘 {today.min}/{today.max}</span>);
+    bottomItems.push(<span key="fb" className="text-muted-foreground">{today.min}/{today.max}</span>);
   }
 
   const chillText = current.chill ? current.chill.replace(/체감\(|\)|℃/g, "") : "";
