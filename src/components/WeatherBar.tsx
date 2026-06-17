@@ -256,14 +256,15 @@ export const WeatherBar = () => {
         }
       `}</style>
       <div className="flex">
-        {/* 왼쪽 고정 컬럼: 기온 / 체감 */}
-        <div className="flex-shrink-0 flex flex-col justify-center px-2 border-r border-blue-200 bg-blue-100/40 text-[11px] leading-tight">
-          <div className="flex items-center gap-1 whitespace-nowrap">
+        {/* 왼쪽 고정 컬럼: 기온 / 체감 (최소폭, 동등한 중요도) */}
+        <div className="flex-shrink-0 flex flex-col justify-center items-center px-1.5 border-r border-blue-200 bg-blue-100/40 text-xs leading-tight min-w-[3.2rem]">
+          <div className="flex items-center gap-0.5 whitespace-nowrap">
             <Thermometer className="h-3 w-3 text-red-500 flex-shrink-0" />
-            <strong className="text-foreground">{current.temp}℃</strong>
+            <strong className="text-foreground font-bold">{current.temp}℃</strong>
           </div>
-          <div className="text-muted-foreground whitespace-nowrap pl-4">
-            체감 {chillText || "-"}℃
+          <div className="flex items-center gap-0.5 whitespace-nowrap">
+            <span className="text-[10px] text-blue-600 font-semibold leading-none">체감</span>
+            <strong className="text-blue-700 font-bold">{chillText || "-"}℃</strong>
           </div>
         </div>
         {/* 오른쪽 두 줄 마퀴 */}
