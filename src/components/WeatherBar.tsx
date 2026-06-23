@@ -1,8 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Thermometer, Wind, Droplets, Cloud } from "lucide-react";
 
 const WEATHER_API_URL = "https://round-thunder-8301.rladudrnr03.workers.dev/";
-const MARQUEE_SPEED = 50; // px per second — both rows share this
 
 interface CurrentWeather {
   temp: string;
@@ -19,8 +18,8 @@ interface CurrentWeather {
 }
 
 interface DailyForecast {
-  label: string;
-  dayLabel: string;
+  label: string; // 오늘/내일
+  dayLabel: string; // 16일(화)
   amWeather: string;
   pmWeather: string;
   min: string;
@@ -49,7 +48,14 @@ const parseCurrent = (html: string): CurrentWeather | null => {
       level: li?.querySelector(".air-lvt")?.childNodes[0]?.textContent?.trim() || "",
     });
     return {
-      temp: tempText, chill, minmax, humidity, wind, rain, updated, diff,
+      temp: tempText,
+      chill,
+      minmax,
+      humidity,
+      wind,
+      rain,
+      updated,
+      diff,
       pm25: parseAir(airItems[0]),
       pm10: parseAir(airItems[1]),
       o3: parseAir(airItems[2]),
@@ -96,53 +102,6 @@ const airColor = (level: string) => {
   return "text-muted-foreground";
 };
 
-const interleave = (items: React.ReactNode[]): React.ReactNode[] => {
-  const out: React.ReactNode[] = [];
-  items.forEach((it, i) => {
-    out.push(it);
-    if (i < items.length - 1) {
-      out.push(<span key={`sep-${i}`} className="text-blue-300 px-1">|</span>);
-    }
-  });
-  return out;
-};
-
-// Marquee row: measures one content set's width and sets duration = width/SPEED
-// so both rows scroll at the same px/sec regardless of content length.
-const MarqueeRow = ({ children }: { children: React.ReactNode }) => {
-  const setRef = useRef<HTMLDivElement>(null);
-  const [duration, setDuration] = useState(20);
-
-  useLayoutEffect(() => {
-    const measure = () => {
-      const w = setRef.current?.offsetWidth ?? 0;
-      if (w > 0) setDuration(Math.max(w / MARQUEE_SPEED, 8));
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    if (setRef.current) ro.observe(setRef.current);
-    return () => ro.disconnect();
-  }, [children]);
-
-  return (
-    <div className="flex-1 overflow-hidden">
-      <div
-        className="flex w-max items-center text-[11px]"
-        style={{ animation: `weather-marquee ${duration}s linear infinite` }}
-      >
-        <div ref={setRef} className="flex items-center gap-2 px-2 flex-shrink-0">
-          {children}
-          <span className="text-blue-300 px-1">|</span>
-        </div>
-        <div className="flex items-center gap-2 px-2 flex-shrink-0" aria-hidden="true">
-          {children}
-          <span className="text-blue-300 px-1">|</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export const WeatherBar = () => {
   const [current, setCurrent] = useState<CurrentWeather | null>(null);
   const [forecast, setForecast] = useState<DailyForecast[]>([]);
@@ -166,7 +125,7 @@ export const WeatherBar = () => {
 
   if (loading) {
     return (
-      <div className="mb-2 h-12 rounded-md bg-blue-50 border border-blue-100 px-2 flex items-center text-[11px] text-muted-foreground">
+      <div className="mb-2 h-7 rounded-md bg-blue-50 border border-blue-100 px-2 flex items-center text-[11px] text-muted-foreground">
         기상정보 불러오는 중...
       </div>
     );
@@ -180,102 +139,99 @@ export const WeatherBar = () => {
     );
   }
 
-  const today = forecast.find((f) => f.label === "오늘");
-  const tomorrow = forecast.find((f) => f.label === "내일");
-
-  const renderDay = (f: DailyForecast) => (
-    <span className="inline-flex items-center gap-1">
-      <span>오전 {f.amWeather}({f.amPop})</span>
-      <span className="text-blue-300">·</span>
-      <span>오후 {f.pmWeather}({f.pmPop})</span>
-      <span className="text-muted-foreground ml-1">{f.min}/{f.max}</span>
+  const items: React.ReactNode[] = [];
+  if (current.minmax) {
+    items.push(<span key="minmax" className="text-muted-foreground">{current.minmax}</span>);
+  }
+  items.push(
+    <span key="hum" className="inline-flex items-center gap-1">
+      <Droplets className="h-3 w-3 text-blue-500" />습도 {current.humidity}
     </span>
   );
-
-  // 윗줄: 오늘 + 공기질
-  const topItems: React.ReactNode[] = [];
-  if (today) {
-    topItems.push(
-      <span key="today" className="inline-flex items-center gap-1">
-        <strong className="text-blue-700">오늘</strong>
-        {renderDay(today)}
-      </span>
-    );
-  }
-  topItems.push(
+  items.push(
+    <span key="wind" className="inline-flex items-center gap-1">
+      <Wind className="h-3 w-3 text-sky-500" />바람 {current.wind}
+    </span>
+  );
+  items.push(
     <span key="pm25" className="inline-flex items-center gap-1">
-      <Cloud className="h-3 w-3 text-slate-500" />초미세
-      <span className={airColor(current.pm25.level) + " font-semibold"}>{current.pm25.level || "-"}</span>
+      <Cloud className="h-3 w-3 text-slate-500" />초미세 {current.pm25.val}
+      <span className={airColor(current.pm25.level) + " font-semibold"}>{current.pm25.level}</span>
     </span>
   );
-  topItems.push(
+  items.push(
     <span key="pm10" className="inline-flex items-center gap-1">
-      <Cloud className="h-3 w-3 text-slate-500" />미세
-      <span className={airColor(current.pm10.level) + " font-semibold"}>{current.pm10.level || "-"}</span>
+      <Cloud className="h-3 w-3 text-slate-500" />미세 {current.pm10.val}
+      <span className={airColor(current.pm10.level) + " font-semibold"}>{current.pm10.level}</span>
     </span>
+  );
+  forecast.forEach((f) => {
+    items.push(
+      <span key={f.label} className="inline-flex items-center gap-1">
+        <strong className="text-blue-700">{f.label}</strong>
+        <span className="text-muted-foreground">{f.dayLabel}</span>
+        <span>오전 {f.amWeather}({f.amPop})</span>
+        <span>오후 {f.pmWeather}({f.pmPop})</span>
+        <span className="text-muted-foreground">{f.min}/{f.max}</span>
+      </span>
+    );
+  });
+  if (current.diff) {
+    items.push(<span key="diff" className="text-muted-foreground">{current.diff}</span>);
+  }
+
+  const sep = (i: number) => (
+    <span key={`s${i}`} className="text-blue-300 px-1">|</span>
   );
 
-  // 아랫줄: 내일 + 습도/바람
-  const bottomItems: React.ReactNode[] = [];
-  if (tomorrow) {
-    bottomItems.push(
-      <span key="tom" className="inline-flex items-center gap-1">
-        <strong className="text-indigo-700">내일</strong>
-        {renderDay(tomorrow)}
-      </span>
-    );
-  }
-  const humShort = current.humidity?.replace(/\s+/g, "") || "";
-  if (humShort) {
-    bottomItems.push(
-      <span key="hum" className="inline-flex items-center gap-1">
-        <Droplets className="h-3 w-3 text-blue-500" />{humShort}
-      </span>
-    );
-  }
-  const windShort = current.wind?.replace(/\s+/g, "") || "";
-  if (windShort) {
-    bottomItems.push(
-      <span key="wind" className="inline-flex items-center gap-1">
-        <Wind className="h-3 w-3 text-sky-500" />{windShort}
-      </span>
-    );
-  }
-  if (bottomItems.length === 0 && today) {
-    bottomItems.push(<span key="fb" className="text-muted-foreground">{today.min}/{today.max}</span>);
-  }
+  const interleaved: React.ReactNode[] = [];
+  items.forEach((it, i) => {
+    interleaved.push(it);
+    if (i < items.length - 1) interleaved.push(sep(i));
+  });
 
   const chillText = current.chill ? current.chill.replace(/체감\(|\)|℃/g, "") : "";
 
   return (
     <div className="mb-2 rounded-md bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-100 overflow-hidden">
       <style>{`
-        @keyframes weather-marquee {
+        .weather-marquee {
+          animation: marquee 60s linear infinite;
+        }
+        @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
       `}</style>
-      <div className="flex">
-        {/* 왼쪽 고정 컬럼: 기온 / 체감 (최소폭, 동등한 중요도) */}
-        <div className="flex-shrink-0 flex flex-col justify-center items-center px-1.5 border-r border-blue-200 bg-blue-100/40 text-xs leading-tight min-w-[3.2rem]">
-          <div className="flex items-center gap-0.5 whitespace-nowrap">
-            <Thermometer className="h-3 w-3 text-red-500 flex-shrink-0" />
-            <strong className="text-foreground font-bold">{current.temp}℃</strong>
-          </div>
-          <div className="flex items-center gap-0.5 whitespace-nowrap">
-            <span className="text-[10px] text-blue-600 font-semibold leading-none">체감</span>
-            <strong className="text-blue-700 font-bold">{chillText || "-"}℃</strong>
-          </div>
+      <div className="relative h-7 flex items-center">
+        {/* 왼쪽 고정: 기온/체감 */}
+        <div className="flex-shrink-0 flex items-center gap-1.5 px-2 border-r border-blue-200 bg-blue-100/40 h-full text-[11px] ">
+          <Thermometer className="h-3 w-3 text-red-500 flex-shrink-0" />
+          <strong className="text-foreground whitespace-nowrap">{current.temp}℃</strong>
+          {chillText && (
+            <span className="text-muted-foreground whitespace-nowrap">체감 {chillText}℃</span>
+          )}
         </div>
-        {/* 오른쪽 두 줄 마퀴 */}
-        <div className="flex-1 min-w-0 flex flex-col">
-          <div className="h-6 flex items-center border-b border-blue-100/60">
-            <MarqueeRow>{interleave(topItems)}</MarqueeRow>
-          </div>
-          <div className="h-6 flex items-center">
-            <MarqueeRow>{interleave(bottomItems)}</MarqueeRow>
-          </div>
-        </div>
+        {/* 오른쪽 마퀴 */}
+<div className="flex-1 overflow-hidden">
+  {/* 💡 핵심 1: w-max 추가로 글자 길이에 맞춰 컨테이너 너비 확장 */}
+  <div className="weather-marquee w-max flex items-center text-[11px]">
+    
+    {/* 💡 핵심 2: 두 세트를 각각 동일한 div로 묶어 오차를 없앰 */}
+    {/* 1번 세트 */}
+    <div className="flex items-center gap-2 px-2">
+      {interleaved}
+      <span className="text-blue-300 px-1">|</span>
+    </div>
+
+    {/* 2번 세트 (1번 세트와 완벽히 동일한 구조) */}
+    <div className="flex items-center gap-2 px-2">
+      {interleaved}
+      <span className="text-blue-300 px-1">|</span>
+    </div>
+
+  </div>
+</div>
       </div>
     </div>
   );
