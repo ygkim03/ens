@@ -151,7 +151,7 @@ export const WeatherBar = () => {
   }
 
   const sep = (i: number) => (
-    <span key={`s${i}`} className="text-blue-300 px-0.5">|</span>
+    <span key={`s${i}`} className="text-blue-300 px-px">|</span>
   );
 
   const interleaved: React.ReactNode[] = [];
