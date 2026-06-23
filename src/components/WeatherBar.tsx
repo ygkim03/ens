@@ -151,7 +151,7 @@ export const WeatherBar = () => {
   }
 
   const sep = (i: number) => (
-    <span key={`s${i}`} className="text-blue-300 px-0.5">|</span>
+    <span key={`s${i}`} className="text-blue-300 px-px">|</span>
   );
 
   const interleaved: React.ReactNode[] = [];
@@ -175,7 +175,7 @@ export const WeatherBar = () => {
     <div className="mb-2 rounded-md bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-100 overflow-hidden">
       <style>{`
         .weather-marquee {
-          animation: marquee 40s linear infinite;
+          animation: marquee 25s linear infinite;
         }
         @keyframes marquee {
           0% { transform: translateX(0); }
@@ -198,13 +198,13 @@ export const WeatherBar = () => {
         {/* 오른쪽 마퀴 */}
         <div className="flex-1 overflow-hidden">
           <div className="weather-marquee w-max flex items-center">
-            <div className="flex items-center gap-2 px-1.5">
+            <div className="flex items-center gap-1 px-1">
               {interleaved}
-              <span className="text-blue-300 px-0.5">|</span>
+              <span className="text-blue-300 px-px">|</span>
             </div>
-            <div className="flex items-center gap-2 px-1.5">
+            <div className="flex items-center gap-1 px-1">
               {interleaved}
-              <span className="text-blue-300 px-0.5">|</span>
+              <span className="text-blue-300 px-px">|</span>
             </div>
           </div>
         </div>
